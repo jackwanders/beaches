@@ -9,6 +9,7 @@ import { Chips } from './Chips'
 import { DetailSheet } from './DetailSheet'
 import { Header } from './Header'
 import { Recommendations } from './Recommendations'
+import { Search } from './Search'
 import { TimeRail } from './TimeRail'
 
 /** Toggle membership without caring about order. */
@@ -24,6 +25,7 @@ export function Home() {
   const [cravings, setCravings] = useState<string[]>([])
   const [moods, setMoods] = useState<MoodId[]>([])
   const [selected, setSelected] = useState<Service | null>(null)
+  const [searching, setSearching] = useState(false)
 
   // Chips are scoped to the meal, so both rows change as the day turns over.
   // Gap is clock-dependent (open-now across every meal), hence nowMinutes.
@@ -65,7 +67,7 @@ export function Home() {
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md bg-ocean text-foam">
-      <Header now={now} state={state} simulated={simulated} />
+      <Header now={now} state={state} simulated={simulated} onSearch={() => setSearching(true)} />
       <TimeRail now={now} />
 
       <Chips
@@ -108,6 +110,13 @@ export function Home() {
           />
         </div>
       )}
+
+      <Search
+        open={searching}
+        now={now}
+        onClose={() => setSearching(false)}
+        onSelect={setSelected}
+      />
 
       <DetailSheet
         service={selected}

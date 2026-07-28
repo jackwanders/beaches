@@ -190,6 +190,37 @@ ambiguous".
   the detail sheet, but the build order puts favorites and notes at step 9.
   The sheet is the surface they will attach to.
 
+## Step 8 — search
+
+- **Search is a full-screen dialog behind a header icon**, not an input on the
+  home screen. The home screen's job is three cards; a permanent search field
+  would be a fourth thing to look at. One tap to open, and the vocabulary is
+  right there.
+- **An empty query lists the whole 39-term vocabulary.** It doubles as the
+  answer to "what can I even search for here?", which is the real question a
+  controlled vocabulary raises. Suggestions match anywhere in the term, with
+  prefix matches ranked first — `ice` gives `ice cream` before `rice`.
+- **Results are a browse surface**, per the spec's "the three-result rule
+  applies only to the home screen". Every service carrying the keyword is
+  shown, across every meal.
+- **Open-now is a sort, not a filter.** Open services lead, ranked the same way
+  the home screen ranks them; closed ones follow ordered by how soon they open,
+  each carrying "Opens at 5:30 PM". `rank()` is now exported from
+  `candidates.ts` so both surfaces agree on quality order.
+- **Each result names its meal.** The same venue appears once per service —
+  Neptunes shows up for both lunch and dinner under `salad` — so collapsing
+  them to the venue would lose exactly the distinction the data exists to make.
+- **Matched signature dishes are listed, where known.** Searching `salad`
+  surfaces "Greek salad" under Neptunes and "Conch salad" under Barefoot;
+  services carrying the keyword with no dish naming it simply show none.
+- **The party-age filter applies here too**, for consistency with every other
+  surface — `duck` returns nothing while `HAS_UNDER_12` is on.
+- **The detail sheet stacks over search** rather than replacing it. Both are
+  native dialogs, so Escape closes the top one and returns to the results with
+  the query intact.
+- **Menu PDF text is not searched.** See the measurement below — it stays the
+  progressive enhancement the spec describes, and was not built for v1.
+
 ## Menu PDF extraction — measured, not recommended
 
 The spec files dish-level PDF parsing as progressive enhancement. Measured

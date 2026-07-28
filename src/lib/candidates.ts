@@ -69,7 +69,8 @@ function isClosedToday(s: Service, t: Date): boolean {
   return s.closedDays?.includes(t.getDay()) ?? false
 }
 
-function rank(a: Service, b: Service): number {
+/** Exported for search, which ranks its open-now group the same way. */
+export function rank(a: Service, b: Service): number {
   const va = venueBySlug.get(a.venue)
   const vb = venueBySlug.get(b.venue)
 
