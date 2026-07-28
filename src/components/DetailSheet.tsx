@@ -92,6 +92,17 @@ function ServiceBlock({
           value={note}
           onChange={(e) => onNote(service.id, e.target.value)}
           onBlur={() => setEditingNote(false)}
+          onKeyDown={(e) => {
+            // The note is already written on every keystroke, so Enter only has
+            // to get the keyboard out of the way. Without this there is no way
+            // off the field on a phone except tapping some other part of the
+            // sheet, which is hidden behind the keyboard.
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              e.currentTarget.blur()
+            }
+          }}
+          enterKeyHint="done"
           placeholder="Add a note…"
           aria-label={`Note for ${MEAL_LABELS[service.meal].toLowerCase()}`}
           className="mt-3 w-full rounded-lg border border-foam/15 bg-ocean px-2.5 py-2 text-sm text-foam placeholder:text-sand/40 focus:border-turquoise/60 focus:outline-none"
