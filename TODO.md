@@ -458,6 +458,46 @@ is a misleading picture of the property fourteen minutes before it fills up.
   and return every service on the resort across every meal. It now returns
   breakfast, opening shortly — 10 cards instead of 39.
 
+## Service summary lines
+
+The card's bottom line was `signatureDishes[0]` — the first array element,
+picked arbitrarily. "Prosciutto pizza" for Dino's told you less than
+"Neapolitan pizza & sandwiches" would, and 8 of 42 services had no dish at all
+so the line simply vanished.
+
+- **Generated lines live in `data/summaries.json`, not in `services.json`.**
+  `CLAUDE.md` says to treat the seed files as given; keeping generated content
+  in its own file keeps it distinguishable from curated data and makes a
+  regeneration a one-file change. `summaryFor()` falls back to the first
+  signature dish if a line is ever missing.
+- **Source: the mirrored menu PDFs, for 33 of 42.** The same extraction that
+  was measured and rejected for the craving chips in step 6 is exactly right
+  here — chips need precision, a descriptor needs range. The technique that
+  works is naming the menu's own section structure: Cricketer's has a starters
+  block and a "Handhelds" section, which is where "Shareables & pub handhelds"
+  comes from.
+- **9 services were researched instead**, being buffet signage or empty PDFs.
+  Eight came back corroborated by two or more independent sources; `the-dive`
+  could not be corroborated at all and falls back to the seed data, which its
+  existing `dataWarning` already flags as thin.
+- **A test guards the set** — `src/lib/summaries.test.ts`. Every active service
+  has a line, none exceed 45 characters, none contain selling adjectives, house
+  style holds, and **no line is identical to the dish it replaced**. That last
+  one stops a lazy regeneration silently undoing the point.
+- **`cuisine` was dropped from the Now card.** With a summary present it was
+  doing a worse version of the same job: 14 of 42 summaries echoed a word from
+  the cuisine line directly above them, and Pinta's 44-character cuisine string
+  truncated anyway. The card now reads venue, village, hours, food. `cuisine`
+  still shows in Explore and on the detail sheet.
+
+### Possible seed-data error, unresolved
+
+`bayside-breakfast` lists "Fresh omelets" in `signatureDishes`, but two
+independent reviews say Bayside is the one breakfast buffet *without* a
+made-to-order omelette station, while a third says it has one. Not confident
+enough to correct the seed data; the summary avoids the claim. Worth checking
+on arrival.
+
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.

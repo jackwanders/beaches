@@ -1,5 +1,6 @@
 import { venueBySlug } from '../data'
 import { thumbUrl } from '../lib/assets'
+import { summaryFor } from '../lib/summaries'
 import type { Candidate } from '../lib/candidates'
 import { badgesFor, serviceStatus, villageName, type StatusTone } from '../lib/display'
 import { Badge } from './Badge'
@@ -24,7 +25,8 @@ export function VenueCard({
   const venue = venueBySlug.get(service.venue)
   const status = serviceStatus(candidate, nowMinutes)
   const thumb = thumbUrl(venue?.heroSource)
-  const dish = service.signatureDishes[0]
+  // What this place serves at this meal, not one dish off the menu.
+  const summary = summaryFor(service.id, service.signatureDishes)
 
   // A future answer must be distinguishable from a place you can walk to now,
   // at a glance and not only by reading the status line.
@@ -70,13 +72,16 @@ export function VenueCard({
           )}
         </div>
 
+        {/* Village only. The summary below describes the food better than
+            `cuisine` does — a third of the summaries were echoing a word from
+            it, and Pinta's 44-character cuisine string truncated anyway. */}
         <p className="truncate text-[13px] text-sand/70">
-          {venue?.cuisine} · {villageName(venue?.village ?? '')}
+          {villageName(venue?.village ?? '')}
         </p>
 
         <p className={`mt-1 text-sm tabular-nums ${TONE_TEXT[status.tone]}`}>{status.text}</p>
 
-        {dish && <p className="mt-1 truncate text-sm text-sand">“{dish}”</p>}
+        {summary && <p className="mt-1 truncate text-sm text-sand">{summary}</p>}
 
         {(badgesFor(service).length > 0 || service.dataWarning) && (
           <div className="mt-2 flex flex-wrap gap-1.5">
