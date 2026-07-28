@@ -331,11 +331,11 @@ export function DetailSheet({
                 so it needs a scrim of its own to stay visible. */}
             <div
               aria-hidden
-              className="absolute inset-x-0 top-0 z-10 h-10 bg-gradient-to-b from-ocean/70 to-transparent"
+              className="pointer-events-none absolute inset-x-0 top-0 z-10 h-10 bg-gradient-to-b from-ocean/70 to-transparent"
             />
             <div
               aria-hidden
-              className="absolute inset-x-0 top-2.5 z-10 mx-auto h-1 w-10 rounded-full bg-foam/80"
+              className="pointer-events-none absolute inset-x-0 top-2.5 z-10 mx-auto h-1 w-10 rounded-full bg-foam/80"
             />
             {hero && <img src={hero} alt="" className="h-44 w-full object-cover" />}
             <div
@@ -353,7 +353,10 @@ export function DetailSheet({
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-ocean/80 text-lg text-foam focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
+              // z-20 and pointer-events on the decoration: the handle scrim
+              // is z-10 and 40px tall, which covered 28 of this button's 36px
+              // and swallowed the taps.
+              className="absolute top-3 right-3 z-20 grid size-9 place-items-center rounded-full bg-ocean/80 text-lg text-foam focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
             >
               ✕
             </button>
