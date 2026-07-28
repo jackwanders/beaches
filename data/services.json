@@ -1,0 +1,469 @@
+{
+  "$comment": "One record per venue x meal. This is the primary table the app queries. Times are minutes from local midnight. Hours from beaches.com/resorts/turks-caicos/restaurants retrieved 2026-07-27.",
+  "$schema_version": 1,
+  "retrieved": "2026-07-27",
+  "menuUrlBase": "https://cdn.sandals.com/rfcm-system/prd/restaurant-menus/",
+  "meals": ["breakfast", "lunch", "gap", "dinner", "snacks", "lateNight"],
+  "keywordVocabulary": [
+    "beef", "steak", "chicken", "pork", "lamb", "duck", "fish", "shrimp",
+    "lobster", "conch", "shellfish", "eggs", "cheese",
+    "pasta", "pizza", "sushi", "burger", "taco", "sandwich", "salad", "soup",
+    "curry", "noodles", "rice", "ribs", "jerk", "kebab", "teppanyaki",
+    "fried", "grill", "buffet", "vegetarian",
+    "pastry", "dessert", "ice cream", "pancakes", "gelato", "coffee", "cocktails"
+  ],
+  "services": [
+    {
+      "id": "marios-breakfast", "venue": "marios", "meal": "breakfast",
+      "opens": 390, "closes": 630, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "162breakfast-all/Mario's_Breakfast_Buffet_Sign_for_RFCM.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "eggs", "pastry", "fish", "vegetarian"],
+      "signatureDishes": []
+    },
+    {
+      "id": "marios-dinner", "venue": "marios", "meal": "dinner",
+      "opens": 1020, "closes": 1290, "format": "hybrid",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "162dinner-all/FB_2026_BTC_Mario's_Dinner_Menu.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["pasta", "beef", "chicken", "vegetarian", "buffet", "dessert"],
+      "signatureDishes": ["Pasta bar", "Eggplant parmigiana"],
+      "note": "Antipasti buffet alongside a la carte."
+    },
+
+    {
+      "id": "reflections-breakfast", "venue": "reflections", "meal": "breakfast",
+      "opens": 390, "closes": 630, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "85breakfast-all/Reflections_Breakfast_Buffet_Sign_for_RFCM.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "eggs", "pancakes", "pastry", "vegetarian"],
+      "signatureDishes": ["Waffles"]
+    },
+    {
+      "id": "reflections-lunch", "venue": "reflections", "meal": "lunch",
+      "opens": 750, "closes": 870, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "85lunch-all/Reflections_Lunch_Buffet_Sign_for_RFCM.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "rice", "chicken", "salad", "fried", "vegetarian", "dessert"],
+      "signatureDishes": ["Stir-fry station"]
+    },
+
+    {
+      "id": "kimonos-dinner", "venue": "kimonos", "meal": "dinner",
+      "opens": 1020, "closes": 1260, "format": "alacarte",
+      "dressCode": "casual", "reservation": true, "minAge": null,
+      "menuPath": "87dinner-all/FB_2026_BTC_Kimonos_Dinner.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["teppanyaki", "beef", "steak", "chicken", "shrimp", "rice", "noodles"],
+      "signatureDishes": ["Teriyaki chicken", "Fried rice", "Bananas in Paradise"],
+      "note": "Earliest dinner close on property. Books up fast."
+    },
+
+    {
+      "id": "arizonas-lunch", "venue": "arizonas", "meal": "lunch",
+      "opens": 720, "closes": 960, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "86lunch-all/arizona_buffet.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "taco", "burger", "ribs", "grill", "kebab", "salad", "vegetarian"],
+      "signatureDishes": ["Taco bar", "Make-your-own gyro bar", "Ribs"],
+      "note": "Reviews call the lunch buffet the better of its two services."
+    },
+    {
+      "id": "arizonas-dinner", "venue": "arizonas", "meal": "dinner",
+      "opens": 1050, "closes": 1290, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "86dinner-all/FB_2026_BTC_Arizona_Dinner_Menu_MAR_30.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["ribs", "steak", "taco", "fish", "beef", "grill"],
+      "signatureDishes": ["BBQ ribs", "Grilled fish tacos", "Chimichurri steak"],
+      "note": "Live music and sunset views."
+    },
+
+    {
+      "id": "schooners-breakfast", "venue": "schooners", "meal": "breakfast",
+      "opens": 450, "closes": 660, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "88breakfast-all/BTC_2020_Schooner_breakfast_menu.pdf",
+      "menuVintage": 2020, "confidence": "verified",
+      "keywords": ["eggs", "pancakes", "fish", "pastry"],
+      "signatureDishes": [],
+      "note": "One of only two breakfasts running to 11:00."
+    },
+    {
+      "id": "schooners-dinner", "venue": "schooners", "meal": "dinner",
+      "opens": 1020, "closes": 1290, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "88dinner-all/BTC_2023_Schooner_dinner_menu.pdf",
+      "menuVintage": 2023, "confidence": "verified",
+      "keywords": ["fish", "lobster", "conch", "shellfish", "soup", "steak", "grill"],
+      "signatureDishes": ["Steamed mussels", "Conch chowder", "Lobster tail", "Coconut-crusted snapper"],
+      "note": "Open-air, steps from the beach. Live entertainment most nights."
+    },
+
+    {
+      "id": "sapodillas-dinner", "venue": "sapodillas", "meal": "dinner",
+      "opens": 1050, "closes": 1290, "format": "alacarte",
+      "dressCode": "evening", "reservation": false, "minAge": 12,
+      "menuPath": "89dinner-all/2024_BTC_Sapodillas_2.pdf",
+      "menuVintage": 2024, "confidence": "verified",
+      "keywords": ["beef", "lobster", "fish", "dessert"],
+      "signatureDishes": ["Braised oxtail", "Grilled lobster", "Caribbean rum cake"],
+      "note": "Quieter because of the age minimum. Some sources list reservations as required — verify."
+    },
+
+    {
+      "id": "giuseppes-breakfast", "venue": "giuseppes", "meal": "breakfast",
+      "opens": 420, "closes": 630, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "90breakfast-all/Giuseppe's_Breakfast_Buffet_Sign_for_RFCM.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "eggs", "pastry", "vegetarian"],
+      "signatureDishes": ["Omelet station"]
+    },
+    {
+      "id": "giuseppes-lunch", "venue": "giuseppes", "meal": "lunch",
+      "opens": 750, "closes": 870, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "90lunch-all/Giuseppe's_Lunch_Buffet_Sign_for_RFCM.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "pasta", "pizza", "salad", "chicken", "vegetarian", "dessert"],
+      "signatureDishes": ["Pasta bar"],
+      "note": "Indoors with strong A/C — the go-to on a hot day."
+    },
+    {
+      "id": "giuseppes-dinner", "venue": "giuseppes", "meal": "dinner",
+      "opens": 1020, "closes": 1290, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "90dinner-all/Giuseppe's_Dinner_Buffet_Sign_for_RFCM.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "pasta", "pizza", "fish", "salad", "vegetarian", "dessert"],
+      "signatureDishes": ["Grilled fish"]
+    },
+
+    {
+      "id": "bobby-dees-snacks", "venue": "bobby-dees", "meal": "lunch",
+      "opens": 660, "closes": 1080, "format": "quickservice",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "91snacks-all/BTC_2023_BobbyDees.pdf",
+      "menuVintage": 2023, "confidence": "verified",
+      "keywords": ["burger", "chicken", "cheese", "fried", "sandwich", "ice cream", "dessert"],
+      "signatureDishes": ["Smashburger", "Milkshakes", "Nachos", "Mac 'n' cheese"],
+      "dataWarning": "Official page lists 11:00 AM – 6:00 AM, almost certainly a typo for 6:00 PM. Encoded as 6:00 PM. VERIFY ON ARRIVAL."
+    },
+
+    {
+      "id": "le-petit-chateau-dinner", "venue": "le-petit-chateau", "meal": "dinner",
+      "opens": 1050, "closes": 1290, "format": "alacarte",
+      "dressCode": "evening", "reservation": false, "minAge": 12,
+      "menuPath": "92dinner-all/BTC_2023_Le_Petit_Chateau.pdf",
+      "menuVintage": 2023, "confidence": "verified",
+      "keywords": ["duck", "lamb", "beef", "shellfish", "soup", "salad", "dessert"],
+      "signatureDishes": ["French onion soup", "Sea scallops", "Beef tournedos", "Duck breast", "Molten chocolate cake", "Crème brûlée"],
+      "note": "Sit indoors if the Sesame Street show is running — the outdoor terrace gets loud. Some sources list reservations as required; a reviewer reported a Friday closure."
+    },
+
+    {
+      "id": "cafe-de-paris-snacks", "venue": "cafe-de-paris", "meal": "snacks",
+      "opens": 360, "closes": 1320, "format": "quickservice",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "93snacks-all/Cafe_de_Paris_Sign_for_RFCM.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["coffee", "pastry", "dessert"],
+      "signatureDishes": ["Croissants", "Macarons", "Iced caramel latte"]
+    },
+
+    {
+      "id": "bella-napoli-lunch", "venue": "bella-napoli", "meal": "lunch",
+      "opens": 660, "closes": 1020, "format": "quickservice",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "135lunch-all/BTC_Bella_Napoli_Horizontal_SAN40.pdf",
+      "menuVintage": null, "confidence": "verified",
+      "keywords": ["pizza", "cheese", "conch", "vegetarian"],
+      "signatureDishes": ["Conch pizza", "Sweet calzones"]
+    },
+
+    {
+      "id": "barefoot-breakfast", "venue": "barefoot", "meal": "breakfast",
+      "opens": 450, "closes": 630, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "156breakfast-all/FB_2026_BTC_Barefoot_by_the_Sea_Breakfast.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["eggs", "pancakes", "pastry", "fish"],
+      "signatureDishes": ["Peach pancakes"]
+    },
+    {
+      "id": "barefoot-lunch", "venue": "barefoot", "meal": "lunch",
+      "opens": 750, "closes": 870, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "156lunch-all/BTC_2020_BarefootbytheSea_lunch_FAW.pdf",
+      "menuVintage": 2020, "confidence": "verified",
+      "keywords": ["taco", "fish", "conch", "salad", "chicken", "fried", "sandwich"],
+      "signatureDishes": ["Fish tacos", "Conch salad", "Caesar with grilled mahi"]
+    },
+    {
+      "id": "barefoot-dinner", "venue": "barefoot", "meal": "dinner",
+      "opens": 1050, "closes": 1290, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "156dinner-all/FB_2026_BTC_Barefoot_by_the_Sea_Dinner.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["fish", "shrimp", "conch", "steak", "salad", "grill"],
+      "signatureDishes": ["Conch fritters", "Snapper in coconut sauce", "Mahi mahi", "Coconut shrimp", "Surf & turf"],
+      "note": "Tables on the sand. Google lists dinner from 5:00 rather than 5:30."
+    },
+
+    {
+      "id": "cricketers-lunch", "venue": "cricketers", "meal": "lunch",
+      "opens": 720, "closes": 1320, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "157lunch-all/FB_2026_BTC_Criketer's_Menu_(1).pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["fish", "fried", "curry", "chicken", "beef", "soup", "burger", "sandwich"],
+      "signatureDishes": ["Fish & chips", "Butter chicken", "Truffle parmesan fries", "Shepherd's pie"],
+      "note": "The only venue open continuously through the 3:30–5:00 gap."
+    },
+    {
+      "id": "cricketers-latenight", "venue": "cricketers", "meal": "lateNight",
+      "opens": 1320, "closes": 120, "crossesMidnight": true, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "157lateNight-all/FB_2026_BTC_Criketer's_Menu_(1).pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["fish", "fried", "burger", "sandwich", "curry"],
+      "signatureDishes": [],
+      "note": "Same menu file as lunch. Google shows a midnight close rather than 2:00 AM."
+    },
+
+    {
+      "id": "dinos-lunch", "venue": "dinos", "meal": "lunch",
+      "opens": 660, "closes": 1020, "format": "quickservice",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "159lunch-all/BTC_Dinos_Lunch_24_V2.pdf",
+      "menuVintage": 2024, "confidence": "verified",
+      "keywords": ["pizza", "cheese", "pork", "gelato", "dessert", "vegetarian"],
+      "signatureDishes": ["Prosciutto pizza", "White four-cheese pizza", "Gelato"]
+    },
+
+    {
+      "id": "soy-dinner", "venue": "soy", "meal": "dinner",
+      "opens": 1050, "closes": 1290, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "126dinner-all/2024_BTC_Soy_Menu.pdf",
+      "menuVintage": 2024, "confidence": "verified",
+      "keywords": ["sushi", "fish", "rice", "soup", "fried"],
+      "signatureDishes": ["Spicy tuna roll", "Miso soup", "Tempura"],
+      "note": "Quieter alternative to Kimonos next door."
+    },
+
+    {
+      "id": "bayside-breakfast", "venue": "bayside", "meal": "breakfast",
+      "opens": 420, "closes": 630, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "209breakfast-all/Bayside_Buffet_Sign_for_RFCM.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "eggs", "pancakes", "pastry", "vegetarian"],
+      "signatureDishes": ["French toast", "Fresh omelets"],
+      "note": "Oceanfront terrace. Google shows no Wednesday breakfast — unconfirmed."
+    },
+    {
+      "id": "bayside-lunch", "venue": "bayside", "meal": "lunch",
+      "opens": 720, "closes": 900, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "209lunch-all/Bayside_Lunch_Buffet_Sign_for_RFCM,_International.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "grill", "salad", "chicken", "vegetarian", "dessert"],
+      "signatureDishes": ["Grilled veggies"]
+    },
+    {
+      "id": "bayside-dinner", "venue": "bayside", "meal": "dinner",
+      "opens": 1020, "closes": 1290, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "209dinner-all/Bayside_Dinner_Buffet_Sign_for_RFCM,_Themes.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "grill", "chicken", "beef", "fish", "vegetarian", "dessert"],
+      "signatureDishes": [],
+      "note": "Dinner runs nightly rotating themes. The rotation is not published online — read the board on property."
+    },
+
+    {
+      "id": "sky-breakfast", "venue": "sky", "meal": "breakfast",
+      "opens": 450, "closes": 630, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "216breakfast-all/FB_2024_BTC_Sky_Breakfast_2.pdf",
+      "menuVintage": 2024, "confidence": "verified",
+      "keywords": ["eggs", "pancakes", "pastry"],
+      "signatureDishes": ["Stuffed apple French toast"],
+      "note": "NO age restriction at breakfast. Rooftop views."
+    },
+    {
+      "id": "sky-dinner", "venue": "sky", "meal": "dinner",
+      "opens": 1050, "closes": 1290, "format": "alacarte",
+      "dressCode": "evening", "reservation": false, "minAge": 12,
+      "menuPath": "216dinner-all/FB_2024_BTC_Sky_Menu_(Revised).pdf",
+      "menuVintage": 2024, "confidence": "verified",
+      "keywords": ["lobster", "steak", "fish", "rice", "dessert"],
+      "signatureDishes": ["Surf & turf", "Lobster risotto", "Coconut cream pie"],
+      "note": "Age minimum applies at DINNER ONLY. This is the canonical proof case for meal-keyed data."
+    },
+
+    {
+      "id": "neptunes-breakfast", "venue": "neptunes", "meal": "breakfast",
+      "opens": 450, "closes": 630, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "210breakfast-all/BTC_Neptunes_Breakfast_2020.pdf",
+      "menuVintage": 2020, "confidence": "verified",
+      "keywords": ["eggs", "pancakes", "vegetarian", "pastry"],
+      "signatureDishes": ["Eggs benedict", "Blueberry pancakes", "Avocado toast"],
+      "note": "Front tables have the best water view on property. Arrive early."
+    },
+    {
+      "id": "neptunes-lunch", "venue": "neptunes", "meal": "lunch",
+      "opens": 750, "closes": 870, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "210lunch-all/BTC_Neptunes_Lunch_2020(Update).pdf",
+      "menuVintage": 2020, "confidence": "verified",
+      "keywords": ["salad", "fish", "chicken", "kebab", "vegetarian", "dessert"],
+      "signatureDishes": ["Greek salad", "Fish basket", "Veggie kabob"]
+    },
+    {
+      "id": "neptunes-dinner", "venue": "neptunes", "meal": "dinner",
+      "opens": 1020, "closes": 1290, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "210dinner-all/FB_2025_BTC_Neptunes_Dinner_WEB.pdf",
+      "menuVintage": 2025, "confidence": "verified",
+      "keywords": ["lamb", "kebab", "shellfish", "salad", "fish", "grill", "dessert"],
+      "signatureDishes": ["Lamb shank", "Grilled octopus", "Lamb kebabs"],
+      "note": "Highest-rated venue with a Google presence (4.5, 186 reviews). Live music some nights."
+    },
+
+    {
+      "id": "jerk-truck-lunch", "venue": "jerk-truck", "meal": "lunch",
+      "opens": 660, "closes": 1020, "format": "truck",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "337lunch-all/BTC_Jerk_Truck_Menu.pdf",
+      "menuVintage": null, "confidence": "verified",
+      "keywords": ["jerk", "chicken", "pork", "fried"],
+      "signatureDishes": ["Jerk chicken", "Jerk pork", "Festival", "Sweet potato fries"]
+    },
+
+    {
+      "id": "jojo-java-snacks", "venue": "jojo-java", "meal": "snacks",
+      "opens": 360, "closes": 1320, "format": "quickservice",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "362snacks-all/Jojo's_Temporary_Menu,_Letter.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["coffee", "pastry"],
+      "signatureDishes": ["Cold brew"],
+      "note": "Menu file is marked temporary. Pastries sell out early."
+    },
+
+    {
+      "id": "mr-mac-snacks", "venue": "mr-mac", "meal": "lunch",
+      "opens": 600, "closes": 1020, "format": "truck",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "334snacks-all/Mr._Mac's.pdf",
+      "menuVintage": null, "confidence": "verified",
+      "keywords": ["cheese", "pasta", "vegetarian"],
+      "signatureDishes": ["Mac 'n' cheese, roughly ten varieties"],
+      "note": "Earliest-opening lunch option at 10:00."
+    },
+
+    {
+      "id": "the-dive-snacks", "venue": "the-dive", "meal": "snacks",
+      "opens": null, "closes": null, "format": "truck",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": null,
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["cocktails"],
+      "signatureDishes": ["Rum punch", "Beaches Blue"],
+      "dataWarning": "No hours and no menu published. Drinks only. Treat as always-available or hide from meal queries."
+    },
+
+    {
+      "id": "yoyos-snacks", "venue": "yoyos", "meal": "snacks",
+      "opens": 600, "closes": 1320, "format": "quickservice",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "363snacks-all/Yoyo_RFCM_Sign.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["ice cream", "dessert"],
+      "signatureDishes": ["Self-serve frozen yogurt"]
+    },
+
+    {
+      "id": "pinta-breakfast", "venue": "pinta", "meal": "breakfast",
+      "opens": 390, "closes": 630, "format": "buffet",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "369breakfast-all/Pinta_Buffet_Sign.pdf",
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["buffet", "eggs", "pastry", "vegetarian"],
+      "signatureDishes": []
+    },
+    {
+      "id": "pinta-lunch", "venue": "pinta", "meal": "lunch",
+      "opens": 720, "closes": 930, "format": "hybrid",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "369lunch-all/FB_2026_BTC_Pinta_Lunch_Feb_25.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["pasta", "pizza", "taco", "noodles", "salad", "grill", "vegetarian"],
+      "signatureDishes": [],
+      "note": "Separate kitchens: Caribbean, Italian, Mexican, Asian, salads, grill."
+    },
+    {
+      "id": "pinta-dinner", "venue": "pinta", "meal": "dinner",
+      "opens": 1050, "closes": 1290, "format": "hybrid",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "369dinner-all/FB_2026_BTC_Pinta_Dinner_Menu_Feb_25.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["pasta", "pizza", "taco", "noodles", "salad", "grill", "vegetarian"],
+      "signatureDishes": [],
+      "note": "Best single venue for a family that wants four different cuisines at one table."
+    },
+
+    {
+      "id": "butchs-breakfast", "venue": "butchs", "meal": "breakfast",
+      "opens": 450, "closes": 660, "format": "alacarte",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "368breakfast-all/FB_2026_BTC_Butches_Chophouse_Breakfast_SHRIMP_Mar_30.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["eggs", "steak", "shrimp", "pastry"],
+      "signatureDishes": [],
+      "note": "NO reservation and NO dress code at breakfast. Runs to 11:00."
+    },
+    {
+      "id": "butchs-dinner", "venue": "butchs", "meal": "dinner",
+      "opens": 1020, "closes": 1290, "format": "alacarte",
+      "dressCode": "evening", "reservation": true, "minAge": null,
+      "menuPath": "368dinner-all/FB_2026_BTC_Butch_Chophouse_Dinner_SHRIMP_Menu_Mar_30.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["steak", "beef", "fish", "shellfish", "grill"],
+      "signatureDishes": ["Dry-aged steaks", "Dedicated kids' menu"],
+      "note": "Reservation and evening attire apply at DINNER ONLY. Book on arrival day."
+    },
+
+    {
+      "id": "bru-snacks", "venue": "bru", "meal": "snacks",
+      "opens": 360, "closes": 1380, "format": "quickservice",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": "370snacks-all/FB_2026_BTC_Bru_Mar_31.pdf",
+      "menuVintage": 2026, "confidence": "verified",
+      "keywords": ["coffee", "pastry", "cocktails"],
+      "signatureDishes": [],
+      "note": "Latest-closing cafe at 11:00 PM. Coffee by day, cocktails at night."
+    },
+
+    {
+      "id": "calypsos-snacks", "venue": "calypsos", "meal": "snacks",
+      "opens": null, "closes": null, "format": "quickservice",
+      "dressCode": "casual", "reservation": false, "minAge": null,
+      "menuPath": null,
+      "menuVintage": null, "confidence": "inferred",
+      "keywords": ["ice cream", "dessert"],
+      "signatureDishes": ["Snow cones"],
+      "dataWarning": "Not in the official restaurants feed. No hours published. Verify on arrival."
+    }
+  ]
+}
+
