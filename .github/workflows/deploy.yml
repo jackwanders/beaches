@@ -36,11 +36,12 @@ jobs:
       - run: npm run test
       - run: npm run build
 
-      # `enablement: true` turns Pages on for the repo the first time this
-      # runs, so there is no manual settings step to forget.
+      # No `enablement: true`. GITHUB_TOKEN's `pages: write` lets a workflow
+      # deploy to a Pages site that already exists, but not create one — the
+      # first run failed with "Resource not accessible by integration". Pages
+      # was turned on once, out of band:
+      #   gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       # `dist/` is ~33MB — the mirrored heroes, logos and 42 menu PDFs, all of
       # which the service worker precaches so the app works offline.

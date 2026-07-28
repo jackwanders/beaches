@@ -388,9 +388,13 @@ scroll rather than a wrong recommendation.
 - **Tests run in CI before the build.** "A step is not done until build and
   test both pass" applies to the deploy too; a broken `candidates()` should
   never reach the site, and the suite costs half a second.
-- **`configure-pages` with `enablement: true`** turns Pages on for the repo on
-  first run, so there is no manual settings toggle to forget. Pages was not
-  enabled on the repo before this.
+- **Pages had to be enabled out of band.** `configure-pages` takes an
+  `enablement: true` flag that claims to turn Pages on, and the first deploy
+  failed on it: `GITHUB_TOKEN`'s `pages: write` permits deploying to a Pages
+  site that already exists but not *creating* one, so it returned "Resource
+  not accessible by integration". Enabled once with
+  `gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow`, and the
+  flag removed rather than left in place looking like it works.
 - **`concurrency: cancel-in-progress: false`.** A half-published Pages site is
   worse than a slightly stale one, so a running deploy finishes rather than
   being cancelled by a newer push.
