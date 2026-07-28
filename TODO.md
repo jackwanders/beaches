@@ -540,6 +540,28 @@ nothing at runtime, but it is unreachable for this trip. Left in place rather
 than removed — say the word and `src/lib/ios.ts`, its tests and the banner in
 `App.tsx` all go together.
 
+## Detail sheet: drag to dismiss, emphasise what is being served
+
+- **Drag the header down to close.** Past 96px it dismisses, under it springs
+  back. The header is a separate flex child from the scrolling body, so the
+  gesture is unambiguous — there is nothing else a downward drag there could
+  mean. Tracked in a ref rather than state, so a finger moving down the screen
+  does not re-render the sheet every frame.
+- **A grab handle, with its own scrim.** The gesture is undiscoverable without
+  something to aim at, and the heroes are bright sky and pale sand, so a plain
+  `foam/40` bar was invisible on half the venues.
+- **`setPointerCapture` is wrapped in try/catch.** It throws when there is no
+  active pointer, and a failed capture is not worth losing the gesture over —
+  the move handler works either way.
+- **The strong highlight now means "serving right now", not "the one you
+  tapped".** The old highlight followed `focusServiceId`, which is absent
+  entirely when a venue is opened from Explore's village list, and points at a
+  shut service when the card said "opens in 14 min". Open-now is the more
+  useful question and it accounts for overrides and `closedDays`. The tapped
+  service keeps a much fainter border so it is still findable.
+- **"SERVING NOW" is said in words, not only in colour**, so the distinction
+  survives for anyone who cannot see the turquoise.
+
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.

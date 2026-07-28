@@ -11,6 +11,7 @@ import { HoursEditor } from './HoursEditor'
 
 function ServiceBlock({
   service,
+  now,
   nowMinutes,
   highlight,
   starred,
@@ -22,6 +23,7 @@ function ServiceBlock({
   onResetOverride,
 }: {
   service: Service
+  now: Date
   nowMinutes: number
   highlight: boolean
   starred: boolean
@@ -38,7 +40,11 @@ function ServiceBlock({
   const edited = isOverridden(service.id, overrides)
   const notServing = isClosedByOverride(service.id, overrides)
   const badges = badgesFor(effective)
-  const open = !notServing && isOpenAt(effective, nowMinutes)
+  // Serving *right now*: open, not overridden shut, and not closed on this day
+  // of the week. This is what earns the emphasis — "what can I get here now"
+  // is a more useful question than "which card did I tap".
+  const closedToday = effective.closedDays?.includes(now.getDay()) ?? false
+  const open = !notServing && !closedToday && isOpenAt(effective, nowMinutes)
   const menu = menuUrl(service)
   const [editingNote, setEditingNote] = useState(false)
   const [editingHours, setEditingHours] = useState(false)
@@ -46,12 +52,23 @@ function ServiceBlock({
   return (
     <section
       className={`rounded-xl border p-3 ${
-        highlight ? 'border-turquoise/40 bg-turquoise/5' : 'border-foam/10'
+        open
+          ? 'border-turquoise bg-turquoise/10'
+          : highlight
+            ? 'border-foam/25'
+            : 'border-foam/10'
       }`}
     >
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="condensed font-display text-base font-semibold tracking-wide text-foam">
           {MEAL_LABELS[service.meal]}
+          {/* Said in words as well as colour — the border alone would leave
+              this invisible to anyone who cannot see the turquoise. */}
+          {open && (
+            <span className="ml-2 text-[11px] font-semibold tracking-wide text-turquoise">
+              SERVING NOW
+            </span>
+          )}
         </h3>
         <div className="flex items-baseline gap-2">
           <span
@@ -183,6 +200,7 @@ export type SheetTarget = { venueSlug: string; focusServiceId?: string }
 
 export function DetailSheet({
   target,
+  now,
   nowMinutes,
   favorites,
   notes,
@@ -194,6 +212,7 @@ export function DetailSheet({
   onClose,
 }: {
   target: SheetTarget | null
+  now: Date
   nowMinutes: number
   favorites: string[]
   notes: Record<string, string>
@@ -205,6 +224,9 @@ export function DetailSheet({
   onClose: () => void
 }) {
   const ref = useRef<HTMLDialogElement>(null)
+  // Drag-to-dismiss. Tracked in a ref rather than state so a finger moving
+  // down the screen does not re-render the sheet on every frame.
+  const drag = useRef({ startY: 0, active: false })
 
   // showModal() rather than the open attribute: it brings the focus trap,
   // Escape-to-close and ::backdrop with it, which is a lot of correctness for
@@ -212,7 +234,12 @@ export function DetailSheet({
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
-    if (target && !dialog.open) dialog.showModal()
+    if (target && !dialog.open) {
+      // A previous drag may have left a transform on the element.
+      dialog.style.transition = 'none'
+      dialog.style.transform = ''
+      dialog.showModal()
+    }
     if (!target && dialog.open) dialog.close()
   }, [target])
 
@@ -226,6 +253,46 @@ export function DetailSheet({
       document.body.style.overflow = previous
     }
   }, [target])
+
+  // Far enough that it cannot be mistaken for a tap, close enough that it does
+  // not need a whole swipe of the screen.
+  const DISMISS_AFTER_PX = 96
+
+  const settle = (dismiss: boolean) => {
+    const dialog = ref.current
+    if (!dialog) return
+    dialog.style.transition = 'transform 200ms ease-out'
+    dialog.style.transform = ''
+    if (dismiss) onClose()
+  }
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    // The close button and anything else interactive keeps its own behaviour.
+    if ((e.target as HTMLElement).closest('button, a, input')) return
+    drag.current = { startY: e.clientY, active: true }
+    // Capture keeps the drag alive if the finger leaves the header. It can
+    // throw when there is no active pointer, and a failed capture is not worth
+    // losing the gesture over — the move handler works either way.
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId)
+    } catch {
+      // no-op
+    }
+  }
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!drag.current.active || !ref.current) return
+    // Downward only — dragging up should not lift the sheet off the bottom.
+    const dy = Math.max(0, e.clientY - drag.current.startY)
+    ref.current.style.transition = 'none'
+    ref.current.style.transform = `translateY(${dy}px)`
+  }
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (!drag.current.active) return
+    drag.current.active = false
+    settle(e.clientY - drag.current.startY > DISMISS_AFTER_PX)
+  }
 
   const venue = target ? venueBySlug.get(target.venueSlug) : undefined
   const hero = assetUrl(venue?.heroSource)
@@ -252,7 +319,24 @@ export function DetailSheet({
     >
       {venue && (
         <>
-          <div className="relative shrink-0">
+          <div
+            className="relative shrink-0 cursor-grab touch-none select-none active:cursor-grabbing"
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+          >
+            {/* Grab handle. Without something to aim at, the gesture is
+                undiscoverable — and the heroes are bright sky and pale sand,
+                so it needs a scrim of its own to stay visible. */}
+            <div
+              aria-hidden
+              className="absolute inset-x-0 top-0 z-10 h-10 bg-gradient-to-b from-ocean/70 to-transparent"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-x-0 top-2.5 z-10 mx-auto h-1 w-10 rounded-full bg-foam/80"
+            />
             {hero && <img src={hero} alt="" className="h-44 w-full object-cover" />}
             <div
               className={`${hero ? 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-ocean to-transparent pt-12' : ''} px-4 pb-3`}
@@ -291,6 +375,7 @@ export function DetailSheet({
               <ServiceBlock
                 key={s.id}
                 service={s}
+                now={now}
                 nowMinutes={nowMinutes}
                 highlight={s.id === target?.focusServiceId}
                 starred={favorites.includes(s.id)}

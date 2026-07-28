@@ -108,6 +108,7 @@ export default function App() {
 
       <DetailSheet
         target={sheet}
+        now={now}
         nowMinutes={nowMinutes}
         favorites={backup.favorites}
         notes={backup.notes}
