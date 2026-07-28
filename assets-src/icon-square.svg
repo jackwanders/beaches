@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!--
+    Full-bleed variant. Two consumers need the corners filled rather than
+    rounded: Android maskable icons, which crop to whatever shape the launcher
+    uses, and iOS apple-touch-icon, which applies its own rounding and renders
+    transparency as black. The rail is inside the 80% safe circle either way.
+  -->
+  <rect width="512" height="512" fill="#0B2B3C"/>
+  <clipPath id="rail">
+    <rect x="106" y="216" width="300" height="80" rx="40"/>
+  </clipPath>
+  <g clip-path="url(#rail)">
+    <rect x="106" y="216" width="75" height="80" fill="#E8DCC4"/>
+    <rect x="181" y="216" width="67" height="80" fill="#39C7C0"/>
+    <rect x="248" y="216" width="23" height="80" fill="#7C93A1"/>
+    <rect x="271" y="216" width="67" height="80" fill="#4B93DD"/>
+    <rect x="338" y="216" width="68" height="80" fill="#7A6BD0"/>
+    <rect x="178" y="216" width="5" height="80" fill="#0B2B3C"/>
+    <rect x="246" y="216" width="5" height="80" fill="#0B2B3C"/>
+    <rect x="269" y="216" width="5" height="80" fill="#0B2B3C"/>
+    <rect x="336" y="216" width="5" height="80" fill="#0B2B3C"/>
+  </g>
+  <rect x="296" y="196" width="10" height="120" rx="5" fill="#F7FAFA"/>
+</svg>

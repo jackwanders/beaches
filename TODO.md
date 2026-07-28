@@ -349,8 +349,41 @@ scroll rather than a wrong recommendation.
   stars and notes are yours. The backup export deliberately does not include
   overrides.
 
+## Step 12 — manifest, service worker, precache
+
+- **`vite-plugin-pwa`, as the spec prefers.** It derives the manifest's `scope`
+  and `start_url`, and the worker's registration path and scope, from `base`.
+  That is the entire point: a worker cannot control paths above its own
+  location, so a hand-written `/sw.js` would register successfully under
+  `/beaches/` and then cache nothing, silently, until someone was offline on a
+  beach. Verified in a browser rather than reasoned about — scope resolves to
+  `http://localhost:4173/beaches/`, the script to `/beaches/sw.js`, and
+  `/sw.js` at the domain root 404s.
+- **Everything is precached — 145 entries, 32.7 MB.** The 42 menu PDFs, 26
+  heroes, 25 logos, 26 thumbnails, 10 font subsets and the shell. Runtime
+  caching would only hold what had already been opened, which is the wrong
+  half of "airplane mode after first load, all 42 menus open". Nothing in
+  `public/` exceeds Workbox's 2 MiB per-file default, though the limit is
+  raised to 4 MiB for headroom.
+- **The precache manifest uses relative URLs**, which is correct: Workbox
+  resolves them against the worker's own location. Confirmed against the live
+  Cache Storage, where every one of the 140 unique entries is an absolute URL
+  under `/beaches/`. The 145 → 140 difference is duplicate URLs, not gaps —
+  checked, nothing declared is missing.
+- **Both JSON files were already offline** by virtue of the step-1 decision to
+  import them at build time; they are inside the JS bundle rather than fetched.
+- **The icon is the time rail**, which is the app's own mark and original
+  artwork — the resort's logos are mirrored for venue rows only and are not
+  used here. Two sources: rounded corners for contexts that render the icon
+  as-is, and a full-bleed square for the two that mask it themselves, Android
+  maskable and iOS `apple-touch-icon` (which renders transparency as black).
+  `npm run icons` renders them with `sharp`, already a devDependency.
+- **iOS ignores the manifest's display mode**, so the
+  `apple-mobile-web-app-*` meta tags are what make an installed shortcut open
+  without Safari chrome. They also make the step-9 install banner worth acting
+  on.
+
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.
-- **No favicon yet** — `/favicon.ico` 404s in the console. Icons and manifest
-  are step 11.
+
