@@ -1,0 +1,7 @@
+node_modules
+dist
+*.local
+.DS_Store
+
+# public/assets is committed on purpose — the mirrored heroes, logos and menu
+# PDFs are what makes the app work offline.

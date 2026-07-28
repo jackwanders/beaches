@@ -10,17 +10,38 @@
     "googlePlaceId": "ChIJZfKRkwVPS4kRwcW_-lKdeNc",
     "rating": 4.4,
     "ratingCount": 4915,
-    "mapImage": "https://cdn.sandals.com/libs/ui/brands/assets/uploads/btc_map_04_26.jpg",
+    "mapImage": "assets/map.jpg",
     "timezone": "America/Grand_Turk"
   },
   "villages": [
-    { "id": "italian", "name": "Italian Village" },
-    { "id": "french", "name": "French Village" },
-    { "id": "caribbean", "name": "Caribbean Village" },
-    { "id": "seaside", "name": "Seaside Village" },
-    { "id": "key-west", "name": "Key West Village" },
-    { "id": "treasure-beach", "name": "Treasure Beach Village" },
-    { "id": "waterpark", "name": "Pirates Island Waterpark" }
+    {
+      "id": "italian",
+      "name": "Italian Village"
+    },
+    {
+      "id": "french",
+      "name": "French Village"
+    },
+    {
+      "id": "caribbean",
+      "name": "Caribbean Village"
+    },
+    {
+      "id": "seaside",
+      "name": "Seaside Village"
+    },
+    {
+      "id": "key-west",
+      "name": "Key West Village"
+    },
+    {
+      "id": "treasure-beach",
+      "name": "Treasure Beach Village"
+    },
+    {
+      "id": "waterpark",
+      "name": "Pirates Island Waterpark"
+    }
   ],
   "venues": [
     {
@@ -35,8 +56,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-001.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-marios.png",
+      "heroSource": "assets/venues/marios.jpg",
+      "logoSource": "assets/logos/marios.png",
       "notice": "Listed as undergoing refurbishment as of 2026-07-27. Verify on arrival.",
       "operational": false
     },
@@ -52,8 +73,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-002.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-Reflections.png",
+      "heroSource": "assets/venues/reflections.jpg",
+      "logoSource": "assets/logos/reflections.png",
       "operational": true
     },
     {
@@ -66,10 +87,10 @@
       "lng": -72.1958523,
       "coordSource": "google",
       "googlePlaceId": "ChIJfaSJyjtPS4kRTu5r_PT7lyw",
-      "rating": 4.0,
+      "rating": 4,
       "ratingCount": 35,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-003.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-kimonos.png",
+      "heroSource": "assets/venues/kimonos.jpg",
+      "logoSource": "assets/logos/kimonos.png",
       "operational": true
     },
     {
@@ -82,10 +103,10 @@
       "lng": -72.197939,
       "coordSource": "google",
       "googlePlaceId": "ChIJN2WdfwVPS4kREvFwBGiumks",
-      "rating": 4.0,
+      "rating": 4,
       "ratingCount": 53,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-004.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-arizonas.png",
+      "heroSource": "assets/venues/arizonas.jpg",
+      "logoSource": "assets/logos/arizonas.png",
       "operational": true
     },
     {
@@ -100,8 +121,8 @@
       "googlePlaceId": "ChIJz6tnaA9PS4kRAKCyLnX5Zok",
       "rating": 4.1,
       "ratingCount": 103,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-005.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-Schooners.png",
+      "heroSource": "assets/venues/schooners.jpg",
+      "logoSource": "assets/logos/schooners.png",
       "operational": true
     },
     {
@@ -114,10 +135,10 @@
       "lng": -72.1976071,
       "coordSource": "google",
       "googlePlaceId": "ChIJNTmxBQBPS4kRBsa8zdCOoEw",
-      "rating": 5.0,
+      "rating": 5,
       "ratingCount": 6,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-007.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-Sapodilla_s.png",
+      "heroSource": "assets/venues/sapodillas.jpg",
+      "logoSource": "assets/logos/sapodillas.png",
       "operational": true
     },
     {
@@ -132,8 +153,8 @@
       "googlePlaceId": "ChIJgwUn3QVPS4kRiJAMYEhMw5Q",
       "rating": 3.8,
       "ratingCount": 23,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-008.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-Giuseppe_s.png",
+      "heroSource": "assets/venues/giuseppes.jpg",
+      "logoSource": "assets/logos/giuseppes.png",
       "operational": true
     },
     {
@@ -148,8 +169,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-009.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-Bobby_D_s.png",
+      "heroSource": "assets/venues/bobby-dees.jpg",
+      "logoSource": "assets/logos/bobby-dees.png",
       "note": "Inside the pirate ship at Pirates Island Waterpark.",
       "operational": true
     },
@@ -165,8 +186,8 @@
       "googlePlaceId": "ChIJIe8A5wVPS4kR_2wU4HkOfy8",
       "rating": 4.5,
       "ratingCount": 31,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-010.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-Le_Petit_Chateau.png",
+      "heroSource": "assets/venues/le-petit-chateau.jpg",
+      "logoSource": "assets/logos/le-petit-chateau.png",
       "note": "Adjacent to the nightly Sesame Street show stage; outdoor seating can be loud during the show.",
       "operational": true
     },
@@ -182,8 +203,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-012.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-cafe_paris.png",
+      "heroSource": "assets/venues/cafe-de-paris.jpg",
+      "logoSource": "assets/logos/cafe-de-paris.png",
       "operational": true
     },
     {
@@ -198,8 +219,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-014.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-bella_napoli.png",
+      "heroSource": "assets/venues/bella-napoli.jpg",
+      "logoSource": "assets/logos/bella-napoli.png",
       "note": "Between the beach and the Caribbean Village pool.",
       "operational": true
     },
@@ -215,8 +236,8 @@
       "googlePlaceId": "ChIJyU-1SQ9PS4kRn0j6pwsgm44",
       "rating": 4.4,
       "ratingCount": 66,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-015.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-barefoot.png",
+      "heroSource": "assets/venues/barefoot.jpg",
+      "logoSource": "assets/logos/barefoot.png",
       "operational": true
     },
     {
@@ -231,8 +252,8 @@
       "googlePlaceId": "ChIJ9WhBLQBPS4kRtVUiyD402Oc",
       "rating": 4.4,
       "ratingCount": 10,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-016.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-Cricketer_s.png",
+      "heroSource": "assets/venues/cricketers.jpg",
+      "logoSource": "assets/logos/cricketers.png",
       "note": "Has a billiard room and TVs. Latest-closing venue on property.",
       "operational": true
     },
@@ -248,8 +269,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-030.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-Dino_s_Pizzeria.png",
+      "heroSource": "assets/venues/dinos.jpg",
+      "logoSource": "assets/logos/dinos.png",
       "note": "Steps from the Italian Village pool.",
       "operational": true
     },
@@ -265,8 +286,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-026.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-soy.png",
+      "heroSource": "assets/venues/soy.jpg",
+      "logoSource": "assets/logos/soy.png",
       "note": "Next door to Kimonos.",
       "operational": true
     },
@@ -280,10 +301,10 @@
       "lng": -72.1942266,
       "coordSource": "google",
       "googlePlaceId": "ChIJ0_N8DwBPS4kRUqWT3zrNIXM",
-      "rating": 5.0,
+      "rating": 5,
       "ratingCount": 3,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-018.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-bayside.png",
+      "heroSource": "assets/venues/bayside.jpg",
+      "logoSource": "assets/logos/bayside.png",
       "operational": true
     },
     {
@@ -298,8 +319,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-019.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-sky_lounge.png",
+      "heroSource": "assets/venues/sky.jpg",
+      "logoSource": "assets/logos/sky.png",
       "note": "Rooftop above Key West Village.",
       "operational": true
     },
@@ -315,8 +336,8 @@
       "googlePlaceId": "ChIJIU4f0ghPS4kRxuIVb464fRM",
       "rating": 4.5,
       "ratingCount": 186,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-020.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-neptunes.png",
+      "heroSource": "assets/venues/neptunes.jpg",
+      "logoSource": "assets/logos/neptunes.png",
       "operational": true
     },
     {
@@ -332,8 +353,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-023.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/jerk-truck.png",
+      "heroSource": "assets/venues/jerk-truck.jpg",
+      "logoSource": "assets/logos/jerk-truck.png",
       "note": "Near the beach; no cleanup required before eating.",
       "operational": true
     },
@@ -349,8 +370,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-028.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-jojos.png",
+      "heroSource": "assets/venues/jojo-java.jpg",
+      "logoSource": "assets/logos/jojo-java.png",
       "note": "Shares a building with Yoyo's. Pastries often sell out early.",
       "operational": true
     },
@@ -367,8 +388,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-022.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/mr-mack.png",
+      "heroSource": "assets/venues/mr-mac.jpg",
+      "logoSource": "assets/logos/mr-mac.png",
       "operational": true
     },
     {
@@ -384,8 +405,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-021.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/the-dive.png",
+      "heroSource": "assets/venues/the-dive.jpg",
+      "logoSource": "assets/logos/the-dive.png",
       "note": "Beachfront bar truck. No food, no published hours.",
       "operational": true
     },
@@ -401,8 +422,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-029.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-yoyos.png",
+      "heroSource": "assets/venues/yoyos.jpg",
+      "logoSource": "assets/logos/yoyos.png",
       "note": "Self-serve. Shares a building with Jojo Java.",
       "operational": true
     },
@@ -418,9 +439,9 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-256.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-pinta.png",
-      "note": "Opened March 2026. Separate kitchens: Caribbean, Italian, Mexican, Asian, salads, grill.",
+      "heroSource": "assets/venues/pinta.jpg",
+      "logoSource": null,
+      "note": "Opened March 2026. Separate kitchens: Caribbean, Italian, Mexican, Asian, salads, grill. Official logo URL returns 404 as of 2026-07-28; no logo published.",
       "operational": true
     },
     {
@@ -435,8 +456,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-255.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-butchs.png",
+      "heroSource": "assets/venues/butchs.jpg",
+      "logoSource": "assets/logos/butchs.png",
       "note": "Opened March 2026. Dry-aged steaks displayed in the dining room. Dedicated kids' menu.",
       "operational": true
     },
@@ -452,8 +473,8 @@
       "googlePlaceId": null,
       "rating": null,
       "ratingCount": null,
-      "heroSource": "https://cdn.sandals.com/beaches/v11/media/btc/restaurants/large/btc-257.jpg",
-      "logoSource": "https://cdn.sandals.com/beaches/v12/images/resorts/btc/restaurants-bars/restaurants-logo/logo-bru.png",
+      "heroSource": "assets/venues/bru.jpg",
+      "logoSource": "assets/logos/bru.png",
       "note": "Opened March 2026. Coffee by day, craft cocktails at night.",
       "operational": true
     },
@@ -476,4 +497,3 @@
     }
   ]
 }
-
