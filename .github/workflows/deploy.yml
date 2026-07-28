@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # So a failed deploy can be retried without an empty commit.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time. `cancel-in-progress: false` because a half-published
+# Pages site is worse than a slightly stale one — let the running deploy finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # A step is not done until build and test both pass — that applies to
+      # the deploy too. Tests first: a broken candidates() should never reach
+      # the site, and it costs half a second.
+      - run: npm run test
+      - run: npm run build
+
+      # `enablement: true` turns Pages on for the repo the first time this
+      # runs, so there is no manual settings step to forget.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      # `dist/` is ~33MB — the mirrored heroes, logos and 42 menu PDFs, all of
+      # which the service worker precaches so the app works offline.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

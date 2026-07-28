@@ -383,6 +383,28 @@ scroll rather than a wrong recommendation.
   without Safari chrome. They also make the step-9 install banner worth acting
   on.
 
+## Step 13 — deploy
+
+- **Tests run in CI before the build.** "A step is not done until build and
+  test both pass" applies to the deploy too; a broken `candidates()` should
+  never reach the site, and the suite costs half a second.
+- **`configure-pages` with `enablement: true`** turns Pages on for the repo on
+  first run, so there is no manual settings toggle to forget. Pages was not
+  enabled on the repo before this.
+- **`concurrency: cancel-in-progress: false`.** A half-published Pages site is
+  worse than a slightly stale one, so a running deploy finishes rather than
+  being cancelled by a newer push.
+- **`workflow_dispatch` is enabled** so a failed deploy can be retried without
+  an empty commit.
+- **The Pages artifact is ~33MB** — the mirrored heroes, logos and 42 menu
+  PDFs, all precached by the service worker. Well inside Pages' 1GB limit.
+- **Eight high-severity advisories are left unfixed, deliberately.** All eight
+  are one root cause — a `brace-expansion` DoS reached through
+  `workbox-build` → `minimatch`/`jake`/`ejs`. `npm audit --omit=dev` reports
+  **0**: none of it ships to the browser, it only runs at build time over our
+  own hardcoded globs. `npm audit fix` cannot resolve it without `--force`,
+  which would break `vite-plugin-pwa`. Revisit when workbox updates its chain.
+
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.
