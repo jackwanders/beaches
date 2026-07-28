@@ -532,13 +532,6 @@ on arrival.
 - Wording generally loosened: "You have 2 favorites and 4 notes. Favorites and
   notes are only visible on your device — the other phone keeps its own list."
 
-### The iOS install banner is now dead code
-
-`shouldPromptInstall` only ever returns true on iOS, so with both phones on
-Android the step-9 banner will never render. It is correct code and costs
-nothing at runtime, but it is unreachable for this trip. Left in place rather
-than removed — say the word and `src/lib/ios.ts`, its tests and the banner in
-`App.tsx` all go together.
 
 ## Detail sheet: drag to dismiss, emphasise what is being served
 
@@ -583,6 +576,31 @@ than removed — say the word and `src/lib/ios.ts`, its tests and the banner in
 - **Results stay grouped by village heading** even when one is selected. The
   heading carries the count, which the pill does not.
 - Seaside Village is never offered in the picker — it holds no venues at all.
+
+## Install prompt
+
+- **Wired to `beforeinstallprompt`, replacing the iOS-only banner.** Chrome no
+  longer shows an install banner of its own — it fires the event and leaves the
+  asking to the site, surfacing only a ⋮ menu item otherwise. Holding the event
+  and calling `prompt()` from our own button is the difference between a
+  one-tap install and a menu entry nobody opens.
+- **`src/lib/ios.ts` and its tests are gone.** `shouldPromptInstall` only ever
+  returned true on iOS, so it could never fire on the two Android phones this
+  is for. `src/lib/install.ts` replaces it.
+- **No dependency on favorites or notes.** The old version waited for a first
+  star, on the reasoning that you should have something to lose before being
+  asked to commit. That was backwards: installing is what makes the 32MB
+  precache stick and what opens the app without browser chrome, and both matter
+  most *before* the trip, when nothing is saved yet. It now shows on a first
+  visit with empty storage.
+- **Dismissal persists** in `btc:v1:installPromptDismissed`; installing hides
+  it via `appinstalled`; and it never shows when already running standalone.
+- **Declining Chrome's dialog is not permanent.** The deferred event is
+  single-use so the banner retires after asking, but Chrome fires it again on a
+  later visit and the banner returns.
+- **The banner sits directly under the header**, above the mode content. Below
+  the cards it would have been several screens down a scrolling list on exactly
+  the visit it matters.
 
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that

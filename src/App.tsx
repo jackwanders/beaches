@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { clockState, minutesOfDay } from './lib/clock'
 import { useFavorites } from './lib/favorites'
-import { dismissInstallPrompt, readInstallContext, shouldPromptInstall } from './lib/ios'
+import { useInstallPrompt } from './lib/install'
 import { useNow } from './lib/now'
 import { useOverrides } from './lib/overrides'
 import { defaultMode, type Mode } from './lib/trip'
@@ -26,9 +26,9 @@ export default function App() {
   const [sheet, setSheet] = useState<SheetTarget | null>(null)
   const [searching, setSearching] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [installDismissed, setInstallDismissed] = useState(false)
 
   const { backup, toggleStar, setNote, importBackup } = useFavorites()
+  const installPrompt = useInstallPrompt()
   const { overrides, setOverride, clearOverride, clearAll } = useOverrides()
 
   // A service row focuses the service it names; a venue row opens the sheet
@@ -37,13 +37,6 @@ export default function App() {
     setSheet({ venueSlug: service.venue, focusServiceId: service.id })
   const openVenue = (venue: Venue) => setSheet({ venueSlug: venue.slug })
 
-  // Only asks once there is a star or a note to lose, and never again once
-  // dismissed or once the app is running from the home screen.
-  const showInstallPrompt =
-    !installDismissed &&
-    shouldPromptInstall(
-      readInstallContext(backup.favorites.length > 0 || Object.keys(backup.notes).length > 0),
-    )
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md bg-ocean text-foam">
@@ -57,6 +50,32 @@ export default function App() {
         onSettings={() => setSettingsOpen(true)}
       />
 
+      {installPrompt.show && (
+        <div className="mx-4 mt-3 flex items-start gap-3 rounded-xl border border-turquoise/40 bg-turquoise/5 p-3">
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foam">Install this app</p>
+            <p className="mt-0.5 text-[13px] leading-snug text-sand/80">
+              Opens full screen, and the menus keep working without a signal.
+            </p>
+            <button
+              type="button"
+              onClick={installPrompt.install}
+              className="mt-2 rounded-lg bg-turquoise px-3 py-1.5 text-sm font-semibold text-ocean focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
+            >
+              Install
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={installPrompt.dismiss}
+            aria-label="Dismiss"
+            className="-mt-1 -mr-1 shrink-0 px-2 py-1 text-sand/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {mode === 'now' ? (
         <Home now={now} nowMinutes={nowMinutes} overrides={overrides} onSelect={openService} />
       ) : (
@@ -67,24 +86,6 @@ export default function App() {
         />
       )}
 
-      {showInstallPrompt && (
-        <div className="mx-4 mt-4 flex items-start gap-3 rounded-xl border border-sand/30 p-3">
-          <p className="flex-1 text-[13px] leading-snug text-sand">
-            Add to Home Screen to keep your stars — Safari clears them after a week away.
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              dismissInstallPrompt()
-              setInstallDismissed(true)
-            }}
-            aria-label="Dismiss"
-            className="-mt-1 -mr-1 shrink-0 px-2 py-1 text-sand/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
-          >
-            ✕
-          </button>
-        </div>
-      )}
 
       <Search
         open={searching}
