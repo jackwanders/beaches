@@ -102,6 +102,43 @@ ambiguous".
   1.87MB of first paint for three 64px squares; it is now 12KB. Full heroes are
   still what the step-7 detail sheet uses. — `thumbUrl` in `src/lib/assets.ts`
 
+## Step 6 — chips
+
+- **Craving chips are a curated twelve, not the whole 39-term vocabulary.** The
+  spec says "rendered from `keywordVocabulary`, ordered by how many services
+  carry each", but raw frequency ranks *attributes* above cravings: vegetarian
+  (17), fish (16), dessert (15), pastry (12), buffet (10), grill (10). Nobody
+  wants "grill" for dinner. Worse, frequency order would push **sushi and jerk
+  off the row entirely** — one service each — and "tapping sushi at 09:00
+  offers Soy at 17:30" is an explicit acceptance check. So the set is the
+  twelve the spec names and the *ordering* is by service count, which is the
+  only reading consistent with both halves of the spec. The full vocabulary
+  still backs step 8's search. — `src/lib/chips.ts`
+- **`seafood` maps to `fish`.** The spec names it; the vocabulary has no such
+  term. `fish` is the closest single keyword and the most-carried of the
+  seafood group.
+- **"Surprise us" is not offered as a chip.** The spec defines it as "no
+  filter, random from valid set", but step 4 already removed the randomness — a
+  random pick would change the list between renders, which the spec forbids.
+  What is left is "show me a different three from the valid set", which is
+  exactly what the reroll button does. A chip duplicating the button below it
+  is one more decision for no gain. `MOOD_PREDICATES.surprise` stays as a
+  harmless no-op.
+- **Mood chips use the spec's full labels** ("Toes in the sand"), not the home
+  mockup's `quick sand nice cool` — those read as ASCII shorthand for the
+  ids, and the full phrases are what make the chips legible.
+- **Cravings are OR'd, moods are AND'd**, per `candidates()` from step 4. Two
+  cravings widen; two moods narrow.
+- **A dead-end state exists, because a craving plus a mood can legitimately
+  match nothing at any hour.** "sushi" + "quick and easy" has no answer on the
+  property — Soy is the only sushi and it is à la carte. The never-zero rule
+  covers *time*, not impossible filter pairs, so the screen names the
+  combination and offers "Start over" rather than rendering silence.
+- **Reroll now resets on filter change as well as clock-state change**, via the
+  same `key`. Still never on a clock tick.
+- **The gap's "Also open" line is suppressed while filters are active** — it
+  lists venues from the unfiltered set, which would contradict the chips.
+
 ## Carried forward
 
 - **Overrides are applied but not editable.** `applyOverrides` runs before every
