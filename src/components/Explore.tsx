@@ -61,12 +61,9 @@ function VenueRow({
               {venue.name}
             </button>
           </h3>
-          <span className="flex shrink-0 items-baseline gap-1.5">
-            {starred && <span className="text-sm text-sand">★</span>}
-            {venue.rating != null && (
-              <span className="text-sm tabular-nums text-sand/80">{venue.rating} ★</span>
-            )}
-          </span>
+          {/* Only the favourite star. A Google rating beside it put two ★ a
+              few pixels apart meaning entirely different things. */}
+          {starred && <span className="shrink-0 text-sm text-sand">★</span>}
         </div>
 
         <p className="truncate text-[12px] text-sand/60">{venue.cuisine}</p>

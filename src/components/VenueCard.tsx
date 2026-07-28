@@ -66,10 +66,6 @@ export function VenueCard({
               {venue?.name ?? service.venue}
             </button>
           </h2>
-          {/* Only 10 of 27 venues carry a rating — no placeholder, no reserved space. */}
-          {venue?.rating != null && (
-            <span className="shrink-0 text-sm tabular-nums text-sand/80">{venue.rating} ★</span>
-          )}
         </div>
 
         {/* Village only. The summary below describes the food better than

@@ -80,9 +80,10 @@ ambiguous".
 - **`?t=HH:MM` freezes the clock, `?u12=0` drops the under-12 filter.** Ships to
   production: it makes every acceptance check verifiable on the real phone, and
   no user triggers it by accident. A `SIM` chip shows whenever it is active.
-  **`?u12=0` is currently the only way to see the three 12+ services** — the
-  party-composition toggle has no assigned step in the build order; it should
-  ride with the step-10 settings screen.
+  **The party-composition toggle was dropped, not deferred.** The youngest in
+  the party is 10, so the three 12+ dinner services are out of reach for this
+  trip regardless — a toggle would only ever be set one way. `HAS_UNDER_12`
+  stays `true` and `?u12=0` stays as a verification aid for the 12+ badge.
 - **The clock ticks every 15s and resyncs on `visibilitychange`.** iOS throttles
   a backgrounded PWA's timers, and unlocking the phone is exactly when the app
   gets used.
@@ -504,6 +505,20 @@ independent reviews say Bayside is the one breakfast buffet *without* a
 made-to-order omelette station, while a third says it has one. Not confident
 enough to correct the seed data; the summary avoids the claim. Worth checking
 on arrival.
+
+## Ratings removed from the cards
+
+- **Dropped from the Now card and Explore's venue rows.** Two reasons, both the
+  user's: a Google rating will not make or break a decision on the trip, and
+  the ★ beside the number was the same glyph as the ★ marking a favourite. In
+  Explore they rendered a few pixels apart meaning entirely different things.
+- **Kept on the detail sheet**, which is the considered view you reach by
+  tapping in, and where no favourite star sits beside it.
+- **Ranking is unaffected.** `rank()` still uses `venue.rating` as a tiebreak
+  after signature dishes and `confidence`; it now orders results without
+  showing its working, which is the same thing proximity already does.
+- A side benefit: with the rating gone the venue name takes the full card
+  width, so "Butch's Island Chop House" no longer competes for space.
 
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
