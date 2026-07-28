@@ -221,6 +221,36 @@ ambiguous".
 - **Menu PDF text is not searched.** See the measurement below — it stays the
   progressive enhancement the spec describes, and was not built for v1.
 
+## Step 9 — favorites, notes, export/import, iOS banner
+
+- **Stars are per service, not per venue.** Neptunes at lunch and Neptunes at
+  dinner are different meals out, and the whole data model exists to keep them
+  apart. `btc:v1:favorites` holds service ids.
+- **The note field only appears once a service is starred.** An unstarred
+  service carrying a note is a state nobody asked for, and hiding the input
+  keeps the sheet quiet until you have expressed interest. An empty note is
+  deleted rather than stored as an empty string.
+- **Export and import live in a "Your stars" dialog behind a header icon**, not
+  a bottom-tab settings screen — same reasoning as the `Now | Explore`
+  decision, and step 11's override editor will land in the same dialog.
+- **Import merges, it never replaces.** Import exists to recover from Safari
+  eviction or to move to a new phone; in both cases silently discarding what is
+  already on the device is the one outcome nobody wants. On a note collision
+  the imported copy wins, since it is the one just deliberately pasted.
+- **Imported ids are validated against the real service list.** The input is
+  pasted by hand and may be truncated, stale, or not a backup at all. Unknown
+  ids are dropped and unparseable input throws a readable message rather than
+  writing junk into storage.
+- **The iOS banner waits for the first star.** Asking someone to install the
+  app before they have anything to lose is asking for a commitment in exchange
+  for nothing. It also checks for iPadOS, which reports itself as a Mac —
+  `maxTouchPoints` disambiguates a real desktop Mac from an iPad.
+- **Favorites have no browse surface yet.** The spec lists "Favorites — starred
+  services with notes, grouped by meal" as a view, but it lands in step 10 as
+  Explore's starred-only filter rather than as a standalone screen that step 10
+  would immediately dismantle. Until then, stars are visible on the venue's own
+  sheet and in the export.
+
 ## Menu PDF extraction — measured, not recommended
 
 The spec files dish-level PDF parsing as progressive enhancement. Measured

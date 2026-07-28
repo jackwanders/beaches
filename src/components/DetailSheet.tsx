@@ -11,10 +11,18 @@ function ServiceBlock({
   service,
   nowMinutes,
   highlight,
+  starred,
+  note,
+  onToggleStar,
+  onNote,
 }: {
   service: Service
   nowMinutes: number
   highlight: boolean
+  starred: boolean
+  note: string
+  onToggleStar: (id: string) => void
+  onNote: (id: string, note: string) => void
 }) {
   const badges = badgesFor(service)
   const open = isOpenAt(service, nowMinutes)
@@ -30,9 +38,24 @@ function ServiceBlock({
         <h3 className="condensed font-display text-base font-semibold tracking-wide text-foam">
           {MEAL_LABELS[service.meal]}
         </h3>
-        <span className={`text-sm tabular-nums ${open ? 'text-turquoise' : 'text-sand/60'}`}>
-          {hoursText(service)}
-        </span>
+        <div className="flex items-baseline gap-2">
+          <span className={`text-sm tabular-nums ${open ? 'text-turquoise' : 'text-sand/60'}`}>
+            {hoursText(service)}
+          </span>
+          {/* Starring is per service, not per venue: Neptunes at lunch and at
+              dinner are different meals out. */}
+          <button
+            type="button"
+            onClick={() => onToggleStar(service.id)}
+            aria-pressed={starred}
+            aria-label={`${starred ? 'Unstar' : 'Star'} ${MEAL_LABELS[service.meal].toLowerCase()}`}
+            className={`-mr-1 self-center px-1 text-lg leading-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
+              starred ? 'text-sand' : 'text-sand/30'
+            }`}
+          >
+            {starred ? '★' : '☆'}
+          </button>
+        </div>
       </div>
 
       {badges.length > 0 && (
@@ -57,6 +80,19 @@ function ServiceBlock({
         <p className="mt-2 text-[13px] leading-snug text-signal">{service.dataWarning}</p>
       )}
 
+      {/* The note field appears once starred — an unstarred service with a note
+          attached is a state nobody asked for, and hiding it keeps the sheet
+          quiet until you have expressed interest. */}
+      {starred && (
+        <input
+          value={note}
+          onChange={(e) => onNote(service.id, e.target.value)}
+          placeholder="Add a note…"
+          aria-label={`Note for ${MEAL_LABELS[service.meal].toLowerCase()}`}
+          className="mt-3 w-full rounded-lg border border-foam/15 bg-ocean px-2.5 py-2 text-sm text-foam placeholder:text-sand/40 focus:border-turquoise/60 focus:outline-none"
+        />
+      )}
+
       {menu && (
         <a
           href={menu}
@@ -74,10 +110,18 @@ function ServiceBlock({
 export function DetailSheet({
   service,
   nowMinutes,
+  favorites,
+  notes,
+  onToggleStar,
+  onNote,
   onClose,
 }: {
   service: Service | null
   nowMinutes: number
+  favorites: string[]
+  notes: Record<string, string>
+  onToggleStar: (id: string) => void
+  onNote: (id: string, note: string) => void
   onClose: () => void
 }) {
   const ref = useRef<HTMLDialogElement>(null)
@@ -169,6 +213,10 @@ export function DetailSheet({
                 service={s}
                 nowMinutes={nowMinutes}
                 highlight={s.id === service.id}
+                starred={favorites.includes(s.id)}
+                note={notes[s.id] ?? ''}
+                onToggleStar={onToggleStar}
+                onNote={onNote}
               />
             ))}
           </div>

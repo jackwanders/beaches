@@ -391,9 +391,17 @@ Bias every unresolved call toward: fewer taps, fewer results, less configuration
 7. Detail sheet
 8. Search with autosuggest
 9. Favorites, notes, export/import, iOS banner
-10. Override editor
-11. Manifest, service worker, precache
-12. GitHub Actions deploy to Pages
+10. Explore — the All Venues browse list, grouped by village and meal, with a
+    starred-only filter. Reached by a `Now | Explore` segmented control in the
+    header, not a bottom tab bar: mode switching is a once-per-trip-phase
+    action, and at 16:00 the home screen has only ~53px of vertical slack, so a
+    56–64px tab bar would push the gap state into scrolling. Favorites live
+    here as a filter rather than as a third destination, which is what keeps
+    the top level at two. This is where `operational: false` finally surfaces —
+    Mario's is unreachable anywhere in the app until it exists.
+11. Override editor
+12. Manifest, service worker, precache
+13. GitHub Actions deploy to Pages
 
 ## Acceptance checks
 

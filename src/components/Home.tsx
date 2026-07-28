@@ -3,6 +3,8 @@ import { candidates, type MoodId } from '../lib/candidates'
 import { cravingChipsAt, filterSummary, moodChipsAt } from '../lib/chips'
 import { clockState, minutesOfDay } from '../lib/clock'
 import { headline } from '../lib/display'
+import { useFavorites } from '../lib/favorites'
+import { dismissInstallPrompt, readInstallContext, shouldPromptInstall } from '../lib/ios'
 import { useNow, youngestOverride } from '../lib/now'
 import type { Service } from '../types'
 import { Chips } from './Chips'
@@ -10,6 +12,7 @@ import { DetailSheet } from './DetailSheet'
 import { Header } from './Header'
 import { Recommendations } from './Recommendations'
 import { Search } from './Search'
+import { Settings } from './Settings'
 import { TimeRail } from './TimeRail'
 
 /** Toggle membership without caring about order. */
@@ -26,6 +29,9 @@ export function Home() {
   const [moods, setMoods] = useState<MoodId[]>([])
   const [selected, setSelected] = useState<Service | null>(null)
   const [searching, setSearching] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const { backup, toggleStar, setNote, importBackup } = useFavorites()
+  const [installDismissed, setInstallDismissed] = useState(false)
 
   // Chips are scoped to the meal, so both rows change as the day turns over.
   // Gap is clock-dependent (open-now across every meal), hence nowMinutes.
@@ -65,9 +71,20 @@ export function Home() {
   // so and name the way out.
   const deadEnd = list.length === 0
 
+  // Only asks once the user has something to lose, and never again once
+  // dismissed or once the app is running from the home screen.
+  const showInstallPrompt =
+    !installDismissed && shouldPromptInstall(readInstallContext(backup.favorites.length > 0))
+
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md bg-ocean text-foam">
-      <Header now={now} state={state} simulated={simulated} onSearch={() => setSearching(true)} />
+      <Header
+        now={now}
+        state={state}
+        simulated={simulated}
+        onSearch={() => setSearching(true)}
+        onSettings={() => setSettingsOpen(true)}
+      />
       <TimeRail now={now} />
 
       <Chips
@@ -111,6 +128,25 @@ export function Home() {
         </div>
       )}
 
+      {showInstallPrompt && (
+        <div className="mx-4 mt-4 flex items-start gap-3 rounded-xl border border-sand/30 p-3">
+          <p className="flex-1 text-[13px] leading-snug text-sand">
+            Add to Home Screen to keep your stars — Safari clears them after a week away.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              dismissInstallPrompt()
+              setInstallDismissed(true)
+            }}
+            aria-label="Dismiss"
+            className="-mt-1 -mr-1 shrink-0 px-2 py-1 text-sand/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <Search
         open={searching}
         now={now}
@@ -118,9 +154,20 @@ export function Home() {
         onSelect={setSelected}
       />
 
+      <Settings
+        open={settingsOpen}
+        backup={backup}
+        onImport={importBackup}
+        onClose={() => setSettingsOpen(false)}
+      />
+
       <DetailSheet
         service={selected}
         nowMinutes={nowMinutes}
+        favorites={backup.favorites}
+        notes={backup.notes}
+        onToggleStar={toggleStar}
+        onNote={setNote}
         onClose={() => setSelected(null)}
       />
     </main>

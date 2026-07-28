@@ -7,11 +7,13 @@ export function Header({
   state,
   simulated,
   onSearch,
+  onSettings,
 }: {
   now: Date
   state: ClockState
   simulated: boolean
   onSearch: () => void
+  onSettings: () => void
 }) {
   return (
     <header className="flex items-baseline justify-between gap-3 px-4 pt-5 pb-3">
@@ -36,6 +38,14 @@ export function Header({
             <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
             <path d="m16 16 4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
+        </button>
+        <button
+          type="button"
+          onClick={onSettings}
+          aria-label="Your stars"
+          className="-mr-2 grid size-9 place-items-center rounded-full text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise active:bg-foam/10"
+        >
+          <span className="text-lg leading-none">★</span>
         </button>
       </div>
     </header>
