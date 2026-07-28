@@ -100,6 +100,53 @@ describe('meal filtering', () => {
   })
 })
 
+describe('not yet open, but still this meal', () => {
+  it('includes lunch services that open later in the lunch window', () => {
+    // 11:46: five trucks and counters are serving; eight sit-down restaurants
+    // open at 12:00 or 12:30. Showing only the five is a misleading picture.
+    const list = candidates(at(11, 46))
+    const open = list.filter((c) => c.opensAt === undefined)
+    const soon = list.filter((c) => c.opensAt !== undefined)
+    expect(open.length).toBe(5)
+    expect(soon.length).toBe(8)
+    expect(list.every((c) => c.service.meal === 'lunch')).toBe(true)
+  })
+
+  it('leads with what is open, then soonest first', () => {
+    const list = candidates(at(11, 46))
+    const firstSoon = list.findIndex((c) => c.opensAt !== undefined)
+    // Nothing open appears after something that is not.
+    expect(list.slice(firstSoon).every((c) => c.opensAt !== undefined)).toBe(true)
+    const opens = list.slice(firstSoon).map((c) => c.opensAt!)
+    expect(opens).toEqual([...opens].sort((a, b) => a - b))
+  })
+
+  it('drops services that have already closed rather than counting them down', () => {
+    // Arizona's lunch closes at 16:00; at 15:00 it is open, and the trucks
+    // that shut at 17:00 are too — but nothing that has ended comes back.
+    const list = candidates(at(15))
+    for (const c of list) {
+      if (c.opensAt !== undefined) expect(c.opensAt).toBeGreaterThan(15 * 60)
+    }
+  })
+
+  it('turns the 06:15 dead zone into breakfast rather than the whole property', () => {
+    // Nothing opens until 06:30, so this used to fall through to the
+    // never-zero forward search and return every service on the resort.
+    const list = candidates(at(6, 15))
+    expect(list.every((c) => c.service.meal === 'breakfast')).toBe(true)
+    expect(list.length).toBeLessThan(15)
+  })
+
+  it('leaves the gap as open-now only', () => {
+    // The gap exists because dinner has not started; admitting not-yet-open
+    // would pull all fourteen dinner services into it.
+    const list = candidates(at(16))
+    expect(list.every((c) => c.opensAt === undefined)).toBe(true)
+    expect(ids(list)).not.toContain('neptunes-dinner')
+  })
+})
+
 describe('never zero', () => {
   it('shifts sushi at 09:00 forward to Soy at 17:30', () => {
     const list = candidates(at(9), { cravings: ['sushi'] })

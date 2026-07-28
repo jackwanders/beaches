@@ -29,6 +29,10 @@ export const CONFIG = {
   // ranked, and scrolls. Kept so restoring that is a one-line change.
   RESULTS: 3,
 
+  // How close to opening before a card counts down in minutes rather than
+  // naming a clock time. "Opens in 512 min" tells you nothing.
+  OPENING_SOON_MINUTES: 60,
+
   // How close to closing before a card turns signal orange. Enough time to
   // cross a 600m property and be seated; 30 is too tight for a buffet, 60
   // would light up a third of dinner service.

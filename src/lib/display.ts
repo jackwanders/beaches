@@ -34,8 +34,15 @@ export type Status = { text: string; tone: StatusTone }
 export function serviceStatus(candidate: Candidate, now: number): Status {
   const s = candidate.service
 
-  // Set only when nothing matched and candidates() shifted forward in time.
+  // Set when the service has not opened yet — either later in this meal, or
+  // because nothing matched and candidates() shifted forward in time.
   if (candidate.opensAt !== undefined) {
+    const untilOpen = (candidate.opensAt - now + MINUTES_PER_DAY) % MINUTES_PER_DAY
+    // Counting down is only useful while the wait is worth having. Past an
+    // hour, the clock time is the more useful fact.
+    if (untilOpen > 0 && untilOpen <= CONFIG.OPENING_SOON_MINUTES) {
+      return { text: `Opens in ${untilOpen} min`, tone: 'later' }
+    }
     return { text: `Opens at ${formatTime(candidate.opensAt)}`, tone: 'later' }
   }
 

@@ -55,6 +55,20 @@ describe('serviceStatus', () => {
     })
   })
 
+  test('counts down when the wait is worth having', () => {
+    // 11:46, Arizona's lunch opens at 12:00.
+    const soon = { service: byId('arizonas-lunch'), opensAt: 12 * 60 }
+    expect(serviceStatus(soon, 11 * 60 + 46)).toEqual({
+      text: 'Opens in 14 min',
+      tone: 'later',
+    })
+  })
+
+  test('names the clock time once it is more than an hour out', () => {
+    const later = { service: byId('neptunes-lunch'), opensAt: 12 * 60 + 30 }
+    expect(serviceStatus(later, 11 * 60).text).toBe('Opens at 12:30 PM')
+  })
+
   test('a forward-shifted candidate names its opening time', () => {
     // The spec's "Soy opens at 5:30 — sushi tonight?" case.
     const shifted = { service: byId('soy-dinner'), opensAt: 1050 }

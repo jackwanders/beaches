@@ -116,12 +116,30 @@ export function candidates(t: Date, opts: CandidateOptions = {}): Candidate[] {
   // During a real meal only that meal competes: at lunch, open snack bars do not
   // pad the list. During the gap it's open-now across every meal — that is the
   // whole point of the gap state.
-  const openNow = eligible.filter(
-    (s) => (meal === 'gap' || s.meal === meal) && isOpenAt(s, now),
-  )
+  const forMeal = eligible.filter((s) => meal === 'gap' || s.meal === meal)
+  const openNow = forMeal.filter((s) => isOpenAt(s, now))
 
-  if (openNow.length > 0) {
-    return openNow.sort(rank).map((service) => ({ service }))
+  // A service that has not opened yet is still an answer during its own meal:
+  // at 11:46 most of lunch is 14 to 44 minutes away, and five trucks is a
+  // misleading picture of the property. One that has already closed is not an
+  // answer, and drops out.
+  //
+  // The gap is excluded deliberately. Its whole job is "what can I eat right
+  // now", and admitting not-yet-open would pull all fourteen dinner services
+  // into a window that exists precisely because dinner has not started.
+  const laterToday =
+    meal === 'gap'
+      ? []
+      : forMeal.filter((s) => !isOpenAt(s, now) && s.opens !== null && s.opens > now)
+
+  if (openNow.length > 0 || laterToday.length > 0) {
+    return [
+      ...openNow.sort(rank).map((service) => ({ service })),
+      // Open leads, the rest follow soonest-first — the same shape search uses.
+      ...laterToday
+        .sort((a, b) => a.opens! - b.opens! || rank(a, b))
+        .map((service) => ({ service, opensAt: service.opens! })),
+    ]
   }
 
   // Never return zero: shift forward in time rather than hiding the craving.

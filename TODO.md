@@ -434,6 +434,30 @@ see the fourth option than a thumb.
 - **The Now screen's vertical budget no longer binds.** Steps 10 and 12 fought
   to keep the gap state off the scrollbar; it scrolls by design now.
 
+## Not-yet-open services during a meal
+
+At 11:46 the Now tab showed five results — every sit-down lunch service opens
+at 12:00 or 12:30, so only the trucks and counters were serving. Five trucks
+is a misleading picture of the property fourteen minutes before it fills up.
+
+- **During a real meal, `candidates()` now returns services that have not
+  opened yet as well as ones that are open.** A service that has already
+  *closed* is still dropped — it is not an answer. Open ones lead, ranked;
+  the rest follow soonest-first, the same shape search already uses.
+- **The gap is deliberately excluded.** Its whole job is "what can I eat right
+  now", and it exists precisely because dinner has not started — admitting
+  not-yet-open would pull all fourteen dinner services into it.
+- **Cards count down while the wait is worth having** ("Opens in 14 min") and
+  name a clock time past `OPENING_SOON_MINUTES: 60` ("Opens at 5:30 PM").
+  "Opens in 512 min" tells you nothing.
+- **Not-yet-open keeps the `later` tone, not signal orange.** The countdown
+  mirrors closing-soon's phrasing, but orange means *act now* and this is
+  *wait* — spending it here would blunt the badge that matters.
+- **This also fixed the 39-card problem at 06:15.** Nothing opens before
+  06:30, so that window used to fall through to the never-zero forward search
+  and return every service on the resort across every meal. It now returns
+  breakfast, opening shortly — 10 cards instead of 39.
+
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.
