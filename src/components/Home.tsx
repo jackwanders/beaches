@@ -56,7 +56,6 @@ export function Home({
   )
 
   const lead = headline(state, list)
-  const hasFilters = cravings.length + moods.length > 0
   const clear = () => {
     setCravings([])
     setMoods([])
@@ -100,16 +99,7 @@ export function Home({
         </div>
       ) : (
         <div className="pt-4">
-          {/* Keyed on the state and the filters so rerolling resets when either
-              turns over — but never on a clock tick, which would silently throw
-              away the user's position once a minute. */}
-          <Recommendations
-            key={`${state}|${[...cravings].sort().join(',')}|${[...moods].sort().join(',')}`}
-            list={list}
-            nowMinutes={nowMinutes}
-            showAlsoOpen={state === 'gap' && !hasFilters}
-            onSelect={onSelect}
-          />
+          <Recommendations list={list} nowMinutes={nowMinutes} onSelect={onSelect} />
         </div>
       )}
     </>

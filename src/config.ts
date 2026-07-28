@@ -24,7 +24,9 @@ export const CONFIG = {
   SUNSET: '19:15',
   ARRIVE_BEFORE_SUNSET_MINUTES: 30,
 
-  // Recommendation count. The whole product thesis.
+  // No longer read by anything. The home screen used to render a window of
+  // this many with a "show me others" reroll; it now lists every candidate,
+  // ranked, and scrolls. Kept so restoring that is a one-line change.
   RESULTS: 3,
 
   // How close to closing before a card turns signal orange. Enough time to

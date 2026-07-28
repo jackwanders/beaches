@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { activeServices } from '../data'
-import { candidates, isOpenAt, rerollWindow } from './candidates'
+import { candidates, isOpenAt } from './candidates'
 
 const at = (h: number, m = 0) => new Date(2026, 7, 17, h, m)
 const service = (id: string) => activeServices.find((s) => s.id === id)!
@@ -159,39 +159,20 @@ describe('overrides', () => {
 })
 
 describe('ranking', () => {
-  it('is stable within a day and rotates between days', () => {
+  it('is stable within a day', () => {
     expect(ids(candidates(at(19)))).toEqual(ids(candidates(at(19, 15))))
+  })
 
+  it('does not rotate between days, so the best match always leads', () => {
+    // The day-seeded rotation existed so the same three would not lead every
+    // morning. The home screen now lists everything and scrolls, so rotating
+    // only pushed the top-ranked venue down the page.
     const day17 = ids(candidates(new Date(2026, 7, 17, 19)))
     const day18 = ids(candidates(new Date(2026, 7, 18, 19)))
-    expect(day18).not.toEqual(day17)
-    // A rotation, not a reshuffle: the same set, different lead.
-    expect([...day18].sort()).toEqual([...day17].sort())
-  })
-})
-
-describe('rerollWindow', () => {
-  const list = [1, 2, 3, 4, 5, 6, 7, 8]
-
-  it('returns three per page', () => {
-    expect(rerollWindow(list, 0)).toEqual([1, 2, 3])
-    expect(rerollWindow(list, 1)).toEqual([4, 5, 6])
+    expect(day18).toEqual(day17)
   })
 
-  it('wraps when the length is not divisible by three', () => {
-    expect(rerollWindow(list, 2)).toEqual([7, 8, 1])
-    expect(rerollWindow(list, 3)).toEqual([2, 3, 4])
-  })
-
-  it('returns what there is when fewer than three exist', () => {
-    expect(rerollWindow([1, 2], 0)).toEqual([1, 2])
-    expect(rerollWindow([1, 2], 5)).toEqual([1, 2])
-    expect(rerollWindow([], 0)).toEqual([])
-  })
-
-  it('never reshuffles — every page preserves source order', () => {
-    const seen = rerollWindow(list, 1)
-    expect(seen).toEqual([4, 5, 6])
-    expect(rerollWindow(list, 1)).toEqual(seen)
+  it('leads with a service that has signature dishes', () => {
+    expect(candidates(at(19))[0].service.signatureDishes.length).toBeGreaterThan(0)
   })
 })

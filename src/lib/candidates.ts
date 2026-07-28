@@ -23,8 +23,8 @@ export const MOOD_PREDICATES: Record<MoodId, (s: Service) => boolean> = {
     ),
   feral: (s) =>
     s.format === 'truck' || s.format === 'quickservice' || s.venue === 'pinta' || s.venue === 'arizonas',
-  // No filter. The day-seeded rotation supplies the variety; picking randomly
-  // would change the list between renders.
+  // No filter. Picking randomly would change the list between renders, which
+  // the spec forbids; it is not offered as a chip.
   surprise: () => true,
 }
 
@@ -93,17 +93,6 @@ export function rank(a: Service, b: Service): number {
   return (va?.name ?? a.venue).localeCompare(vb?.name ?? b.venue)
 }
 
-/**
- * Rotate by day of month so the same three don't lead every morning. Seeded by
- * the date alone, so the list is stable within a day — it must not change
- * between renders.
- */
-function rotateForDay<T>(list: T[], t: Date): T[] {
-  if (list.length === 0) return list
-  const by = t.getDate() % list.length
-  return [...list.slice(by), ...list.slice(0, by)]
-}
-
 export function candidates(t: Date, opts: CandidateOptions = {}): Candidate[] {
   const now = minutesOfDay(t)
   const meal = opts.meal ?? clockState(t)
@@ -132,7 +121,7 @@ export function candidates(t: Date, opts: CandidateOptions = {}): Candidate[] {
   )
 
   if (openNow.length > 0) {
-    return rotateForDay(openNow.sort(rank), t).map((service) => ({ service }))
+    return openNow.sort(rank).map((service) => ({ service }))
   }
 
   // Never return zero: shift forward in time rather than hiding the craving.
@@ -152,15 +141,3 @@ function forwardSearch(pool: Service[], now: number): Candidate[] {
     .map(({ service, until }) => (until === 0 ? { service } : { service, opensAt: service.opens! }))
 }
 
-/**
- * Three per page, wrapping to the start. Advances the window; never reshuffles —
- * a user who rerolls past something wants to be able to get back to it. Fewer
- * than three candidates renders as fewer than three: no padding, no relaxing
- * the minAge filter.
- */
-export function rerollWindow<T>(list: T[], page: number): T[] {
-  const size = CONFIG.RESULTS
-  if (list.length <= size) return list
-  const start = (((page * size) % list.length) + list.length) % list.length
-  return Array.from({ length: size }, (_, i) => list[(start + i) % list.length])
-}

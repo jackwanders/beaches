@@ -409,6 +409,31 @@ scroll rather than a wrong recommendation.
   own hardcoded globs. `npm audit fix` cannot resolve it without `--force`,
   which would break `vite-plugin-pwa`. Revisit when workbox updates its chain.
 
+## Reroll removed — the home screen scrolls
+
+A deliberate departure from the spec, made on the user's call. The plan states
+the three-card rule in four places, including "Three plus a reroll is a
+decision; nine is homework" and the acceptance check "every screen returns at
+most three primary recommendations". In practice the button was a worse way to
+see the fourth option than a thumb.
+
+- **`Recommendations` renders the whole ranked list and scrolls.**
+  `rerollWindow` is deleted; `CONFIG.RESULTS` is now read by nothing and kept
+  only so restoring the window is a one-line change.
+- **The day-seeded rotation is gone too**, and this one is entailed rather than
+  optional. It existed "so the same three don't lead every day" — with the
+  whole list visible it stopped being variety and became a shuffle that pushed
+  the top-ranked venue down the page. The best match now always leads.
+- **The gap's "Also open" line is gone.** It named venues beyond the visible
+  three; with all of them carded it was pure duplication. The 16:00 acceptance
+  check still passes — Cricketer's is named, as a card.
+- **List lengths:** ~9–13 at a real meal, 12 in the gap, 1 at late night, and
+  **39 at 06:15** — six screens of scroll — because nothing breakfast-y is open
+  before 06:30 so the never-zero rule forward-shifts across every meal. That
+  outlier is the one place a cap might still be wanted.
+- **The Now screen's vertical budget no longer binds.** Steps 10 and 12 fought
+  to keep the gap state off the scrollbar; it scrolls by design now.
+
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.

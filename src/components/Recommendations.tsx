@@ -1,72 +1,33 @@
-import { useState } from 'react'
-import { CONFIG } from '../config'
-import { venueBySlug } from '../data'
 import type { Candidate } from '../lib/candidates'
 import type { Service } from '../types'
-import { rerollWindow } from '../lib/candidates'
 import { VenueCard } from './VenueCard'
 
-// Six, not three: at 16:00 the acceptance check expects Cricketer's named, and
-// it ranks seventh. Names are cheap — it's cards that cost a decision.
-const ALSO_OPEN_NAMES = 6
-
+/**
+ * Every candidate, ranked best first, scrolled.
+ *
+ * This replaced a three-card window with a "Show me others" reroll. The spec
+ * argued three-plus-a-reroll is a decision and nine is homework; in practice
+ * the button was a worse way to see the fourth option than a thumb.
+ */
 export function Recommendations({
   list,
   nowMinutes,
-  showAlsoOpen,
   onSelect,
 }: {
   list: Candidate[]
   nowMinutes: number
-  showAlsoOpen: boolean
   onSelect: (service: Service) => void
 }) {
-  const [page, setPage] = useState(0)
-  const visible = rerollWindow(list, page)
-  const canReroll = list.length > CONFIG.RESULTS
-
-  // Named, not carded: the gap has ~12 open services and the home screen still
-  // shows three. This satisfies "name Cricketer's and the cafés" without
-  // turning the surface into homework.
-  const rest = showAlsoOpen
-    ? list
-        .filter((c) => !visible.includes(c))
-        .map((c) => venueBySlug.get(c.service.venue)?.name ?? c.service.venue)
-        .filter((name, i, all) => all.indexOf(name) === i)
-    : []
-
   return (
-    // pb-4, not pb-8: the mode control costs the header ~50px, and at 16:00 —
-    // the gap, with the "Also open" line — that is the difference between
-    // fitting on a phone and not.
-    <div className="px-4 pb-4">
-      <div className="flex flex-col gap-3">
-        {visible.map((c) => (
-          <VenueCard key={c.service.id} candidate={c} nowMinutes={nowMinutes} onSelect={onSelect} />
-        ))}
-      </div>
-
-      {canReroll && (
-        <div className="mt-4 flex items-center justify-between gap-3">
-          <button
-            type="button"
-            onClick={() => setPage((p) => p + 1)}
-            className="flex-1 rounded-xl border border-turquoise/50 py-3 text-sm font-semibold text-turquoise focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise active:bg-turquoise/10"
-          >
-            Show me others
-          </button>
-          <span className="shrink-0 text-xs tabular-nums text-sand/60">
-            {visible.length} of {list.length}
-          </span>
-        </div>
-      )}
-
-      {rest.length > 0 && (
-        <p className="mt-4 text-[13px] leading-relaxed text-sand/60">
-          Also open: {rest.slice(0, ALSO_OPEN_NAMES).join(', ')}
-          {rest.length > ALSO_OPEN_NAMES && ` · +${rest.length - ALSO_OPEN_NAMES}`}
-        </p>
-      )}
+    <div className="flex flex-col gap-3 px-4 pb-10">
+      {list.map((candidate) => (
+        <VenueCard
+          key={candidate.service.id}
+          candidate={candidate}
+          nowMinutes={nowMinutes}
+          onSelect={onSelect}
+        />
+      ))}
     </div>
   )
 }
