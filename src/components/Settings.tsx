@@ -95,7 +95,7 @@ export function Settings({
     >
       <div className="flex shrink-0 items-baseline justify-between gap-3 px-4 pt-5 pb-3">
         <h2 className="condensed font-display text-2xl font-semibold tracking-tight text-foam">
-          STARS &amp; NOTES
+          FAVORITES &amp; NOTES
         </h2>
         <button
           type="button"
@@ -108,15 +108,16 @@ export function Settings({
 
       <div className="flex-1 space-y-5 overflow-y-auto overscroll-contain px-4 pb-8">
         <p className="text-sm leading-snug text-sand/80">
-          {starCount} {starCount === 1 ? 'star' : 'stars'} and {noteCount}{' '}
-          {noteCount === 1 ? 'note' : 'notes'}, kept on this device only. Two phones, two
-          separate lists — that is deliberate.
+          You have {starCount} {starCount === 1 ? 'favorite' : 'favorites'} and {noteCount}{' '}
+          {noteCount === 1 ? 'note' : 'notes'}. Favorites and notes are only visible on your
+          device — the other phone keeps its own list.
         </p>
 
         <section className="space-y-2">
           <h3 className="text-[13px] font-semibold tracking-wide text-sand">BACK UP</h3>
           <p className="text-[13px] leading-snug text-sand/70">
-            Safari clears this after a week without a visit. Copy it somewhere before the trip.
+            Copy this somewhere safe before the trip. You will want it if you switch phones or
+            clear your browser data.
           </p>
           <button
             type="button"
@@ -124,7 +125,7 @@ export function Settings({
             disabled={starCount === 0 && noteCount === 0}
             className="w-full rounded-xl border border-turquoise/50 py-3 text-sm font-semibold text-turquoise focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise active:bg-turquoise/10 disabled:border-foam/15 disabled:text-sand/40"
           >
-            Copy stars &amp; notes
+            Copy to clipboard
           </button>
           <textarea
             readOnly
@@ -138,8 +139,8 @@ export function Settings({
         <section className="space-y-2">
           <h3 className="text-[13px] font-semibold tracking-wide text-sand">RESTORE</h3>
           <p className="text-[13px] leading-snug text-sand/70">
-            Paste a backup here. It merges with what is already on this device — nothing is
-            replaced.
+            Paste a backup to bring everything back. Whatever is already saved here is kept —
+            nothing gets overwritten.
           </p>
           <textarea
             value={paste}
@@ -165,8 +166,8 @@ export function Settings({
               CORRECTED HOURS
             </h3>
             <p className="text-[13px] leading-snug text-sand/70">
-              The seed data is a July snapshot. These are the changes you have made on this
-              device; the recommendations use them.
+              Opening times here came from a July snapshot, so some will be wrong. These are
+              the corrections you have made, and the recommendations use them.
             </p>
             <ul className="space-y-1">
               {edited.map(({ id, label, summary }) => (

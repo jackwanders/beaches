@@ -520,6 +520,26 @@ on arrival.
 - A side benefit: with the rating gone the venue name takes the full card
   width, so "Butch's Island Chop House" no longer competes for space.
 
+## Copy pass on the favorites screen
+
+- **"Stars & notes" → "Favorites & notes"** throughout the settings dialog and
+  its header button, matching the word the user actually uses. The star glyph
+  stays as the affordance; "favorite" is the concept.
+- **The Safari eviction line is gone.** It said "Safari clears this after a
+  week without a visit", which is true of Safari and irrelevant here — both
+  phones are Android. Backup is still worth having, but for the ordinary
+  reasons: a new phone, or cleared browser data. The copy now says that.
+- Wording generally loosened: "You have 2 favorites and 4 notes. Favorites and
+  notes are only visible on your device — the other phone keeps its own list."
+
+### The iOS install banner is now dead code
+
+`shouldPromptInstall` only ever returns true on iOS, so with both phones on
+Android the step-9 banner will never render. It is correct code and costs
+nothing at runtime, but it is unreachable for this trip. Left in place rather
+than removed — say the word and `src/lib/ios.ts`, its tests and the banner in
+`App.tsx` all go together.
+
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.

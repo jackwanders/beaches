@@ -61,7 +61,7 @@ export function Header({
           <button
             type="button"
             onClick={onSettings}
-            aria-label="Stars and notes"
+            aria-label="Favorites and notes"
             className="-mr-2 grid size-9 place-items-center rounded-full text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise active:bg-foam/10"
           >
             <span className="text-lg leading-none">★</span>
