@@ -489,6 +489,13 @@ so the line simply vanished.
   the cuisine line directly above them, and Pinta's 44-character cuisine string
   truncated anyway. The card now reads venue, village, hours, food. `cuisine`
   still shows in Explore and on the detail sheet.
+- **`villageName` no longer strips the " Village" suffix.** Step 5 stripped it
+  for brevity, which stopped being safe the moment `cuisine` left the card:
+  five of the seven villages are Italian, French, Caribbean, Seaside and Key
+  West, and standing alone under a restaurant name they read as cuisines.
+  "Barefoot by the Sea / Italian" says the wrong thing; "Italian Village" says
+  the right one. Search had the same bug — it renders the village with no
+  cuisine beside it — so the fix went in the helper rather than the card.
 
 ### Possible seed-data error, unresolved
 

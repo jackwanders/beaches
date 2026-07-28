@@ -7,12 +7,14 @@ const byId = (id: string): Service => activeServices.find((s) => s.id === id)!
 const open = (id: string) => ({ service: byId(id) })
 
 describe('villageName', () => {
-  test('strips the redundant suffix', () => {
-    expect(villageName('key-west')).toBe('Key West')
-    expect(villageName('italian')).toBe('Italian')
+  test('keeps the "Village" suffix, which is what makes it a place', () => {
+    // Without it these read as cuisines under a restaurant name.
+    expect(villageName('italian')).toBe('Italian Village')
+    expect(villageName('caribbean')).toBe('Caribbean Village')
+    expect(villageName('key-west')).toBe('Key West Village')
   })
 
-  test('leaves names that do not carry it', () => {
+  test('leaves alone the one village not named "… Village"', () => {
     expect(villageName('waterpark')).toBe('Pirates Island Waterpark')
   })
 

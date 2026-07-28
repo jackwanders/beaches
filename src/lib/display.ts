@@ -17,11 +17,16 @@ export const MEAL_LABELS: Record<ClockState, string> = {
 
 const villageNames = new Map(villages.map((v) => [v.id, v.name]))
 
-/** "key-west" → "Key West". The card already sits under a resort heading. */
+/**
+ * "key-west" → "Key West Village", suffix intact.
+ *
+ * An earlier version stripped " Village" for brevity. That was wrong once the
+ * card dropped `cuisine`: five of the seven villages are named Italian,
+ * French, Caribbean, Seaside and Key West, which read as cuisines when they
+ * stand alone under a restaurant name. The suffix is what makes it a place.
+ */
 export function villageName(id: string): string {
-  const name = villageNames.get(id)
-  if (!name) return id
-  return name.replace(/ Village$/, '')
+  return villageNames.get(id) ?? id
 }
 
 export type StatusTone = 'open' | 'soon' | 'later' | 'unknown'
