@@ -11,7 +11,15 @@ const TONE_TEXT: Record<StatusTone, string> = {
   unknown: 'text-sand/80',
 }
 
-export function VenueCard({ candidate, nowMinutes }: { candidate: Candidate; nowMinutes: number }) {
+export function VenueCard({
+  candidate,
+  nowMinutes,
+  onSelect,
+}: {
+  candidate: Candidate
+  nowMinutes: number
+  onSelect: (service: Candidate['service']) => void
+}) {
   const { service } = candidate
   const venue = venueBySlug.get(service.venue)
   const status = serviceStatus(candidate, nowMinutes)
@@ -24,7 +32,7 @@ export function VenueCard({ candidate, nowMinutes }: { candidate: Candidate; now
 
   return (
     <article
-      className={`flex gap-3 rounded-2xl border p-3 ${
+      className={`relative flex gap-3 rounded-2xl border p-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-turquoise has-active:bg-foam/5 ${
         later ? 'border-dashed border-foam/15 bg-surface/50' : 'border-foam/10 bg-surface'
       }`}
     >
@@ -40,12 +48,21 @@ export function VenueCard({ candidate, nowMinutes }: { candidate: Candidate; now
 
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
+          {/* The heading owns the control and its ::after stretches over the
+              whole card, so the tap target is the card while the heading stays
+              a heading — a <button> cannot legally contain one. */}
           <h2
             className={`condensed truncate font-display text-xl font-semibold tracking-tight ${
               later ? 'text-foam/80' : 'text-foam'
             }`}
           >
-            {venue?.name ?? service.venue}
+            <button
+              type="button"
+              onClick={() => onSelect(service)}
+              className="text-left after:absolute after:inset-0 after:content-[''] focus:outline-none"
+            >
+              {venue?.name ?? service.venue}
+            </button>
           </h2>
           {/* Only 10 of 27 venues carry a rating — no placeholder, no reserved space. */}
           {venue?.rating != null && (

@@ -4,7 +4,9 @@ import { cravingChipsAt, filterSummary, moodChipsAt } from '../lib/chips'
 import { clockState, minutesOfDay } from '../lib/clock'
 import { headline } from '../lib/display'
 import { useNow, youngestOverride } from '../lib/now'
+import type { Service } from '../types'
 import { Chips } from './Chips'
+import { DetailSheet } from './DetailSheet'
 import { Header } from './Header'
 import { Recommendations } from './Recommendations'
 import { TimeRail } from './TimeRail'
@@ -21,6 +23,7 @@ export function Home() {
 
   const [cravings, setCravings] = useState<string[]>([])
   const [moods, setMoods] = useState<MoodId[]>([])
+  const [selected, setSelected] = useState<Service | null>(null)
 
   // Chips are scoped to the meal, so both rows change as the day turns over.
   // Gap is clock-dependent (open-now across every meal), hence nowMinutes.
@@ -101,9 +104,16 @@ export function Home() {
             list={list}
             nowMinutes={nowMinutes}
             showAlsoOpen={state === 'gap' && !hasFilters}
+            onSelect={setSelected}
           />
         </div>
       )}
+
+      <DetailSheet
+        service={selected}
+        nowMinutes={nowMinutes}
+        onClose={() => setSelected(null)}
+      />
     </main>
   )
 }

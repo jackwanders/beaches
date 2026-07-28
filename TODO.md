@@ -159,6 +159,37 @@ ambiguous".
 - **The gap's "Also open" line is suppressed while filters are active** — it
   lists venues from the unfiltered set, which would contradict the chips.
 
+## Step 7 — detail sheet
+
+- **Native `<dialog>` + `showModal()`**, not a hand-rolled modal. It brings the
+  focus trap, Escape-to-close and `::backdrop` with it, which is a lot of
+  correctness for a repo that is not adding a modal library. Backdrop clicks
+  are caught by comparing `e.target` to the dialog itself.
+- **The card is the stretched-link pattern, not a `<button>` wrapper.** A
+  button may only contain phrasing content, so wrapping the card in one would
+  have made the `<h2>` invalid and dropped its heading semantics for screen
+  readers. Instead the heading owns the button and its `::after` stretches over
+  the card, so the tap target is the whole card and the heading stays a
+  heading. The focus ring moves to the card via `focus-within`.
+- **Every service the venue runs is listed, not just the one tapped**, ordered
+  by an explicit `MEAL_ORDER` rather than by `opens` — two services have null
+  hours and would sort unpredictably. The tapped service is highlighted. This
+  is the meal-keyed payoff: Sky shows breakfast with no age limit directly
+  above dinner at 12+, and Butch's shows walk-in breakfast above
+  reservation-and-evening-attire dinner.
+- **Full-size heroes are used here**, not the 128px thumbnails — this is the
+  surface the mirroring investment was for, one image at a time after a
+  deliberate tap.
+- **`menuVintage` rides in the link label** ("Menu (2024)"); undated buffet
+  signage just reads "Menu" rather than inventing a year.
+- **`dataWarning` renders in full**, where the home card only had room for a
+  "check hours" badge.
+- **Body scroll is locked while the sheet is open.** `showModal()` blocks
+  interaction behind it but iOS will still scroll the page underneath.
+- **Star and note controls are not here yet.** The spec lists them as part of
+  the detail sheet, but the build order puts favorites and notes at step 9.
+  The sheet is the surface they will attach to.
+
 ## Menu PDF extraction — measured, not recommended
 
 The spec files dish-level PDF parsing as progressive enhancement. Measured

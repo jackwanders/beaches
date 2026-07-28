@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CONFIG } from '../config'
 import { venueBySlug } from '../data'
 import type { Candidate } from '../lib/candidates'
+import type { Service } from '../types'
 import { rerollWindow } from '../lib/candidates'
 import { VenueCard } from './VenueCard'
 
@@ -13,10 +14,12 @@ export function Recommendations({
   list,
   nowMinutes,
   showAlsoOpen,
+  onSelect,
 }: {
   list: Candidate[]
   nowMinutes: number
   showAlsoOpen: boolean
+  onSelect: (service: Service) => void
 }) {
   const [page, setPage] = useState(0)
   const visible = rerollWindow(list, page)
@@ -36,7 +39,7 @@ export function Recommendations({
     <div className="px-4 pb-8">
       <div className="flex flex-col gap-3">
         {visible.map((c) => (
-          <VenueCard key={c.service.id} candidate={c} nowMinutes={nowMinutes} />
+          <VenueCard key={c.service.id} candidate={c} nowMinutes={nowMinutes} onSelect={onSelect} />
         ))}
       </div>
 

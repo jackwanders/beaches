@@ -1,6 +1,6 @@
 import { CONFIG } from '../config'
 import { villages } from '../data'
-import type { ClockState, Service } from '../types'
+import type { ClockState, Meal, Service } from '../types'
 import type { Candidate } from './candidates'
 import { MEAL_WINDOWS, MINUTES_PER_DAY, formatTime } from './clock'
 
@@ -69,6 +69,22 @@ export function headline(state: ClockState, list: Candidate[]): string | null {
     return `Lunch is over. Dinner starts at ${formatTime(DINNER_START)}. Open right now:`
   }
   return null
+}
+
+/**
+ * Day order for listing a venue's services. Not derived from `opens`, because
+ * two services have null hours and would sort unpredictably.
+ */
+export const MEAL_ORDER: Meal[] = ['breakfast', 'lunch', 'snacks', 'dinner', 'lateNight']
+
+export function byMealOrder(a: Service, b: Service): number {
+  return MEAL_ORDER.indexOf(a.meal) - MEAL_ORDER.indexOf(b.meal)
+}
+
+/** "5:00 – 9:30 PM" for a service in its own right, outside any candidate. */
+export function hoursText(s: Service): string {
+  if (s.opens === null || s.closes === null) return 'Hours unconfirmed'
+  return `${formatTime(s.opens)} – ${formatTime(s.closes)}`
 }
 
 /** Badges that are a property of the service, in the order they read best. */
