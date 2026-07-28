@@ -71,10 +71,12 @@ export function Home() {
   // so and name the way out.
   const deadEnd = list.length === 0
 
-  // Only asks once the user has something to lose, and never again once
+  // Only asks once there is a star or a note to lose, and never again once
   // dismissed or once the app is running from the home screen.
   const showInstallPrompt =
-    !installDismissed && shouldPromptInstall(readInstallContext(backup.favorites.length > 0))
+    !installDismissed && shouldPromptInstall(
+      readInstallContext(backup.favorites.length > 0 || Object.keys(backup.notes).length > 0),
+    )
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md bg-ocean text-foam">

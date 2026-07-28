@@ -8,7 +8,8 @@ export type InstallContext = {
   /** Already launched from the home screen. */
   standalone: boolean
   dismissed: boolean
-  hasStars: boolean
+  /** Anything worth losing — stars or notes. */
+  hasSavedData: boolean
 }
 
 /**
@@ -16,11 +17,12 @@ export type InstallContext = {
  * pattern here — star things in July, don't reopen until August — hits that
  * squarely. Installing to the home screen exempts the site.
  *
- * Only prompted once the user has something to lose. A banner shown before the
- * first star is asking for a commitment in exchange for nothing.
+ * Only prompted once the user has something to lose — a star or a note. A
+ * banner shown before either is asking for a commitment in exchange for
+ * nothing.
  */
 export function shouldPromptInstall(ctx: InstallContext): boolean {
-  if (ctx.dismissed || ctx.standalone || !ctx.hasStars) return false
+  if (ctx.dismissed || ctx.standalone || !ctx.hasSavedData) return false
   const isIos =
     /iPad|iPhone|iPod/.test(ctx.userAgent) ||
     // iPadOS 13+ reports itself as Macintosh; touch points give it away.
@@ -28,7 +30,7 @@ export function shouldPromptInstall(ctx: InstallContext): boolean {
   return isIos
 }
 
-export function readInstallContext(hasStars: boolean): InstallContext {
+export function readInstallContext(hasSavedData: boolean): InstallContext {
   const nav = navigator as Navigator & { standalone?: boolean }
   return {
     userAgent: nav.userAgent,
@@ -36,7 +38,7 @@ export function readInstallContext(hasStars: boolean): InstallContext {
     standalone:
       nav.standalone === true || window.matchMedia('(display-mode: standalone)').matches,
     dismissed: read<boolean>(DISMISSED, false),
-    hasStars,
+    hasSavedData,
   }
 }
 

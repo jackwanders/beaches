@@ -47,8 +47,13 @@ export function Settings({
   const applyImport = () => {
     try {
       const incoming = onImport(paste)
-      const n = incoming.favorites.length
-      setMessage({ tone: 'ok', text: `Merged ${n} ${n === 1 ? 'star' : 'stars'}.` })
+      const stars = incoming.favorites.length
+      const notes = Object.keys(incoming.notes).length
+      const parts = [
+        stars > 0 && `${stars} ${stars === 1 ? 'star' : 'stars'}`,
+        notes > 0 && `${notes} ${notes === 1 ? 'note' : 'notes'}`,
+      ].filter(Boolean)
+      setMessage({ tone: 'ok', text: `Merged ${parts.join(' and ')}.` })
       setPaste('')
     } catch (err) {
       setMessage({ tone: 'bad', text: (err as Error).message })
@@ -63,7 +68,7 @@ export function Settings({
     >
       <div className="flex shrink-0 items-baseline justify-between gap-3 px-4 pt-5 pb-3">
         <h2 className="condensed font-display text-2xl font-semibold tracking-tight text-foam">
-          YOUR STARS
+          STARS &amp; NOTES
         </h2>
         <button
           type="button"
@@ -92,7 +97,7 @@ export function Settings({
             disabled={starCount === 0 && noteCount === 0}
             className="w-full rounded-xl border border-turquoise/50 py-3 text-sm font-semibold text-turquoise focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise active:bg-turquoise/10 disabled:border-foam/15 disabled:text-sand/40"
           >
-            Copy my stars
+            Copy stars &amp; notes
           </button>
           <textarea
             readOnly

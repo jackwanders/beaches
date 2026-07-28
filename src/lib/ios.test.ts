@@ -15,12 +15,12 @@ const ctx = (over: Partial<InstallContext> = {}): InstallContext => ({
   maxTouchPoints: 5,
   standalone: false,
   dismissed: false,
-  hasStars: true,
+  hasSavedData: true,
   ...over,
 })
 
 describe('shouldPromptInstall', () => {
-  test('prompts on iPhone Safari once something is starred', () => {
+  test('prompts on iPhone Safari once there is a star or a note', () => {
     expect(shouldPromptInstall(ctx())).toBe(true)
   })
 
@@ -38,7 +38,7 @@ describe('shouldPromptInstall', () => {
   })
 
   test('stays quiet until there is something to lose', () => {
-    expect(shouldPromptInstall(ctx({ hasStars: false }))).toBe(false)
+    expect(shouldPromptInstall(ctx({ hasSavedData: false }))).toBe(false)
   })
 
   test('never returns after being dismissed', () => {

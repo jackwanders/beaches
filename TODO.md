@@ -226,10 +226,12 @@ ambiguous".
 - **Stars are per service, not per venue.** Neptunes at lunch and Neptunes at
   dinner are different meals out, and the whole data model exists to keep them
   apart. `btc:v1:favorites` holds service ids.
-- **The note field only appears once a service is starred.** An unstarred
-  service carrying a note is a state nobody asked for, and hiding the input
-  keeps the sheet quiet until you have expressed interest. An empty note is
-  deleted rather than stored as an empty string.
+- **Notes are independent of stars.** An earlier pass gated the note field on
+  being starred, which was wrong: "kids do not want to eat here" is a note
+  worth keeping on a place you would never star, and it is arguably more useful
+  than a star because it stops a bad suggestion twice. The field collapses to
+  an "Add a note" link until used, so three service blocks do not stack three
+  empty inputs. An empty note is deleted rather than stored as an empty string.
 - **Export and import live in a "Your stars" dialog behind a header icon**, not
   a bottom-tab settings screen — same reasoning as the `Now | Explore`
   decision, and step 11's override editor will land in the same dialog.
@@ -241,10 +243,11 @@ ambiguous".
   pasted by hand and may be truncated, stale, or not a backup at all. Unknown
   ids are dropped and unparseable input throws a readable message rather than
   writing junk into storage.
-- **The iOS banner waits for the first star.** Asking someone to install the
-  app before they have anything to lose is asking for a commitment in exchange
-  for nothing. It also checks for iPadOS, which reports itself as a Mac —
-  `maxTouchPoints` disambiguates a real desktop Mac from an iPad.
+- **The iOS banner waits for the first star _or note_.** Asking someone to
+  install the app before they have anything to lose is asking for a commitment
+  in exchange for nothing — but a notes-only user has just as much to lose, so
+  the trigger is either. It also checks for iPadOS, which reports itself as a
+  Mac; `maxTouchPoints` disambiguates a real desktop Mac from an iPad.
 - **Favorites have no browse surface yet.** The spec lists "Favorites — starred
   services with notes, grouped by meal" as a view, but it lands in step 10 as
   Explore's starred-only filter rather than as a standalone screen that step 10

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { services, venueBySlug } from '../data'
 import { assetUrl, menuUrl } from '../lib/assets'
 import { isOpenAt } from '../lib/candidates'
@@ -27,6 +27,7 @@ function ServiceBlock({
   const badges = badgesFor(service)
   const open = isOpenAt(service, nowMinutes)
   const menu = menuUrl(service)
+  const [editingNote, setEditingNote] = useState(false)
 
   return (
     <section
@@ -80,17 +81,29 @@ function ServiceBlock({
         <p className="mt-2 text-[13px] leading-snug text-signal">{service.dataWarning}</p>
       )}
 
-      {/* The note field appears once starred — an unstarred service with a note
-          attached is a state nobody asked for, and hiding it keeps the sheet
-          quiet until you have expressed interest. */}
-      {starred && (
+      {/* Notes are independent of stars. "Kids won't eat here" is a note worth
+          keeping on a place you would never star, and gating one on the other
+          would lose exactly that. Collapsed to a link until used, so three
+          service blocks do not stack three empty inputs. */}
+      {note || editingNote ? (
         <input
+          // eslint-disable-next-line jsx-a11y/no-autofocus
+          autoFocus={editingNote && !note}
           value={note}
           onChange={(e) => onNote(service.id, e.target.value)}
+          onBlur={() => setEditingNote(false)}
           placeholder="Add a note…"
           aria-label={`Note for ${MEAL_LABELS[service.meal].toLowerCase()}`}
           className="mt-3 w-full rounded-lg border border-foam/15 bg-ocean px-2.5 py-2 text-sm text-foam placeholder:text-sand/40 focus:border-turquoise/60 focus:outline-none"
         />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setEditingNote(true)}
+          className="mt-3 block text-sm text-sand/60 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
+        >
+          Add a note
+        </button>
       )}
 
       {menu && (
