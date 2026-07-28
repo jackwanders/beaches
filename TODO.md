@@ -562,6 +562,28 @@ than removed — say the word and `src/lib/ios.ts`, its tests and the banner in
 - **"SERVING NOW" is said in words, not only in colour**, so the distinction
   survives for anyone who cannot see the turquoise.
 
+## Explore: two combining filters, not one grouping toggle
+
+- **`Village` and `Meal` are now filters that stack**, replacing the
+  either/or grouping control. "Which places in the Italian Village serve
+  lunch" is a question about two axes at once, and a grouping toggle could
+  only ever answer one.
+- **Each pill is two sibling buttons** — the label opens a picker sheet, the ✕
+  clears the filter without opening anything. Not nested, which would be
+  invalid HTML.
+- **Picker counts are computed with the *other* filters applied**, and each
+  picker leaves its own filter out so choosing a village never makes that
+  village read zero. With lunch selected, the village sheet says how many
+  lunch venues each village has; a dead combination reads 0 before you tap it
+  rather than after.
+- **The unit is always the venue now.** The old meal grouping produced service
+  rows; with meal as a filter, a row is a place and the sheet holds the
+  per-service detail. When a meal is picked the row shows that meal's hours,
+  otherwise the meals it serves at all.
+- **Results stay grouped by village heading** even when one is selected. The
+  heading carries the count, which the pill does not.
+- Seaside Village is never offered in the picker — it holds no venues at all.
+
 ## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.

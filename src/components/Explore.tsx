@@ -1,146 +1,146 @@
 import { useMemo, useState } from 'react'
-import { venueBySlug } from '../data'
 import { thumbUrl } from '../lib/assets'
-import { isOpenAt } from '../lib/candidates'
-import { MEAL_LABELS, badgesFor, hoursText, villageName } from '../lib/display'
-import { mealsFor, servicesByMeal, servicesFor, venuesByVillage, type GroupBy } from '../lib/explore'
-import { isClosedByOverride, isOverridden, withOverride } from '../lib/overrides'
-import type { Overrides, Service, Venue } from '../types'
-import { Badge } from './Badge'
+import { MEAL_LABELS, hoursText, villageName } from '../lib/display'
+import {
+  exploreVenues,
+  mealOptions,
+  mealsFor,
+  serviceAt,
+  servicesFor,
+  villageOptions,
+} from '../lib/explore'
+import { withOverride } from '../lib/overrides'
+import type { Meal, Overrides, Venue } from '../types'
+import { PickerSheet } from './PickerSheet'
 
-const CARD =
-  'relative flex gap-3 rounded-2xl border border-foam/10 bg-surface p-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-turquoise has-active:bg-foam/5'
-
-const TITLE = 'condensed truncate font-display text-lg font-semibold tracking-tight text-foam'
-const STRETCH = "text-left after:absolute after:inset-0 after:content-[''] focus:outline-none"
-
-function Thumb({ venue }: { venue: Venue | undefined }) {
-  const src = thumbUrl(venue?.heroSource)
-  if (!src) return null
+/**
+ * A dropdown-style pill. The label opens the picker; the ✕ clears the filter
+ * without opening anything. Two sibling buttons rather than one nested inside
+ * the other, which is not valid HTML.
+ */
+function FilterPill({
+  label,
+  active,
+  onOpen,
+  onClear,
+  clearLabel,
+}: {
+  label: string
+  active: boolean
+  onOpen: () => void
+  onClear: () => void
+  clearLabel: string
+}) {
   return (
-    <img
-      src={src}
-      alt=""
-      loading="lazy"
-      decoding="async"
-      className={`size-12 shrink-0 rounded-lg object-cover ${
-        venue?.operational === false ? 'opacity-40 grayscale' : ''
+    <div
+      className={`flex shrink-0 items-center rounded-full border ${
+        active ? 'border-turquoise bg-turquoise/10' : 'border-foam/15'
       }`}
-    />
+    >
+      <button
+        type="button"
+        onClick={onOpen}
+        className={`flex items-center gap-1.5 rounded-full py-1.5 pl-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
+          active ? 'pr-1 font-semibold text-foam' : 'pr-3 text-sand'
+        }`}
+      >
+        <span className="max-w-40 truncate">{label}</span>
+        {!active && (
+          <svg viewBox="0 0 12 12" className="size-3 shrink-0" aria-hidden>
+            <path
+              d="M2.5 4.5 6 8l3.5-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+            />
+          </svg>
+        )}
+      </button>
+      {active && (
+        <button
+          type="button"
+          onClick={onClear}
+          aria-label={clearLabel}
+          className="grid size-7 shrink-0 place-items-center rounded-full text-foam/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise active:bg-foam/10"
+        >
+          <svg viewBox="0 0 12 12" className="size-3" aria-hidden>
+            <path
+              d="M3 3l6 6M9 3l-6 6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+      )}
+    </div>
   )
 }
 
-function Closed({ venue }: { venue: Venue }) {
-  if (venue.operational !== false) return null
-  return (
-    <p className="mt-1 text-[13px] leading-snug text-signal">
-      {venue.notice ?? 'Closed for refurbishment.'}
-    </p>
-  )
-}
-
-/** By village the unit is the venue: one row, however many meals it serves. */
 function VenueRow({
   venue,
+  meal,
+  overrides,
   starred,
   onSelect,
 }: {
   venue: Venue
+  meal: Meal | null
+  overrides: Overrides
   starred: boolean
   onSelect: (venue: Venue) => void
 }) {
+  const thumb = thumbUrl(venue.heroSource)
+  // With a meal picked, that meal's hours are the useful fact. Without one,
+  // which meals it serves at all.
+  const service = meal ? serviceAt(venue.slug, meal) : undefined
   const meals = mealsFor(venue.slug)
 
   return (
-    <article className={CARD}>
-      <Thumb venue={venue} />
+    <article className="relative flex gap-3 rounded-2xl border border-foam/10 bg-surface p-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-turquoise has-active:bg-foam/5">
+      {thumb && (
+        <img
+          src={thumb}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className={`size-12 shrink-0 rounded-lg object-cover ${
+            venue.operational === false ? 'opacity-40 grayscale' : ''
+          }`}
+        />
+      )}
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
-          <h3 className={TITLE}>
-            <button type="button" onClick={() => onSelect(venue)} className={STRETCH}>
+          <h3 className="condensed truncate font-display text-lg font-semibold tracking-tight text-foam">
+            <button
+              type="button"
+              onClick={() => onSelect(venue)}
+              className="text-left after:absolute after:inset-0 after:content-[''] focus:outline-none"
+            >
               {venue.name}
             </button>
           </h3>
-          {/* Only the favourite star. A Google rating beside it put two ★ a
-              few pixels apart meaning entirely different things. */}
           {starred && <span className="shrink-0 text-sm text-sand">★</span>}
         </div>
 
         <p className="truncate text-[12px] text-sand/60">{venue.cuisine}</p>
 
-        {/* Which meals, not which hours — the sheet has the hours. */}
         <p className="mt-0.5 text-sm text-sand/80">
-          {meals.length > 0
-            ? meals.map((m) => MEAL_LABELS[m].toLowerCase()).join(' · ')
-            : 'no published service'}
+          {service ? (
+            <span className="tabular-nums">{hoursText(withOverride(service, overrides))}</span>
+          ) : meals.length > 0 ? (
+            meals.map((m) => MEAL_LABELS[m].toLowerCase()).join(' · ')
+          ) : (
+            'no published service'
+          )}
         </p>
 
-        <Closed venue={venue} />
-      </div>
-    </article>
-  )
-}
-
-/** By meal the unit is the service — that is what a meal is. */
-function ServiceRow({
-  service,
-  nowMinutes,
-  starred,
-  note,
-  overrides,
-  onSelect,
-}: {
-  service: Service
-  nowMinutes: number
-  starred: boolean
-  note?: string
-  overrides: Overrides
-  onSelect: (service: Service) => void
-}) {
-  const venue = venueBySlug.get(service.venue)
-  const effective = withOverride(service, overrides)
-  const notServing = isClosedByOverride(service.id, overrides)
-  const open = !notServing && venue?.operational !== false && isOpenAt(effective, nowMinutes)
-  const badges = badgesFor(effective)
-
-  return (
-    <article className={CARD}>
-      <Thumb venue={venue} />
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-2">
-          <h3 className={TITLE}>
-            <button type="button" onClick={() => onSelect(service)} className={STRETCH}>
-              {venue?.name ?? service.venue}
-            </button>
-          </h3>
-          {starred && <span className="shrink-0 text-sm text-sand">★</span>}
-        </div>
-
-        <p className="truncate text-[12px] text-sand/60">
-          {villageName(venue?.village ?? '')}
-          {venue?.cuisine ? ` · ${venue.cuisine}` : ''}
-        </p>
-
-        <p
-          className={`mt-0.5 text-sm tabular-nums ${
-            notServing ? 'text-signal line-through' : open ? 'text-turquoise' : 'text-sand/60'
-          }`}
-        >
-          {hoursText(effective)}
-        </p>
-        {isOverridden(service.id, overrides) && (
-          <p className="text-[12px] text-signal">edited</p>
-        )}
-
-        {venue && <Closed venue={venue} />}
-        {note && <p className="mt-1 text-sm leading-snug text-sand">{note}</p>}
-
-        {badges.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {badges.map((b) => (
-              <Badge key={b}>{b}</Badge>
-            ))}
-          </div>
+        {venue.operational === false && (
+          <p className="mt-1 text-[13px] leading-snug text-signal">
+            {venue.notice ?? 'Closed for refurbishment.'}
+          </p>
         )}
       </div>
     </article>
@@ -148,62 +148,62 @@ function ServiceRow({
 }
 
 export function Explore({
-  nowMinutes,
   favorites,
-  notes,
   overrides,
   onSelectVenue,
-  onSelectService,
 }: {
-  nowMinutes: number
   favorites: string[]
-  notes: Record<string, string>
   overrides: Overrides
   onSelectVenue: (venue: Venue) => void
-  onSelectService: (service: Service) => void
 }) {
-  const [groupBy, setGroupBy] = useState<GroupBy>('village')
+  const [village, setVillage] = useState<string | null>(null)
+  const [meal, setMeal] = useState<Meal | null>(null)
   const [starredOnly, setStarredOnly] = useState(false)
+  const [picker, setPicker] = useState<'village' | 'meal' | null>(null)
 
-  const villageGroups = useMemo(
-    () => (groupBy === 'village' ? venuesByVillage({ starredOnly, favorites }) : []),
-    [groupBy, starredOnly, favorites],
+  const filters = { village, meal, starredOnly, favorites }
+  // Each picker's counts leave its own filter out, so choosing a village never
+  // makes that village read zero.
+  const groups = useMemo(
+    () => exploreVenues(filters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [village, meal, starredOnly, favorites],
   )
-  const mealGroups = useMemo(
-    () => (groupBy === 'meal' ? servicesByMeal({ starredOnly, favorites }) : []),
-    [groupBy, starredOnly, favorites],
+  const villageChoices = useMemo(
+    () => villageOptions(filters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [meal, starredOnly, favorites],
+  )
+  const mealChoices = useMemo(
+    () => mealOptions(filters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [village, starredOnly, favorites],
   )
 
-  const empty = groupBy === 'village' ? villageGroups.length === 0 : mealGroups.length === 0
+  const total = groups.reduce((n, g) => n + g.venues.length, 0)
 
   return (
     <div className="pb-10">
-      <div className="flex items-center gap-2 px-4 pt-3 pb-4">
-        <div
-          className="flex rounded-full border border-foam/15 p-0.5"
-          role="group"
-          aria-label="Group by"
-        >
-          {(['village', 'meal'] as const).map((option) => (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={groupBy === option}
-              onClick={() => setGroupBy(option)}
-              className={`rounded-full px-3 py-1.5 text-sm capitalize focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
-                groupBy === option ? 'bg-foam/15 font-semibold text-foam' : 'text-sand'
-              }`}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-
+      <div className="flex items-center gap-2 overflow-x-auto px-4 pt-3 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <FilterPill
+          label={village ? villageName(village) : 'All villages'}
+          active={village !== null}
+          onOpen={() => setPicker('village')}
+          onClear={() => setVillage(null)}
+          clearLabel="Show all villages"
+        />
+        <FilterPill
+          label={meal ? MEAL_LABELS[meal] : 'All meals'}
+          active={meal !== null}
+          onOpen={() => setPicker('meal')}
+          onClear={() => setMeal(null)}
+          clearLabel="Show all meals"
+        />
         <button
           type="button"
           aria-pressed={starredOnly}
           onClick={() => setStarredOnly((v) => !v)}
-          className={`ml-auto rounded-full border px-3 py-1.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
+          className={`shrink-0 rounded-full border px-3 py-1.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
             starredOnly
               ? 'border-turquoise bg-turquoise font-semibold text-ocean'
               : 'border-foam/15 text-sand'
@@ -213,54 +213,53 @@ export function Explore({
         </button>
       </div>
 
-      {empty ? (
+      {total === 0 ? (
         <p className="px-4 text-[15px] leading-snug text-sand">
-          Nothing starred yet. Open a place and tap its star to keep it here.
+          {starredOnly
+            ? 'Nothing starred matches. Open a place and tap its star to keep it here.'
+            : 'Nothing matches both of those. Clear one of them.'}
         </p>
       ) : (
         <div className="space-y-6 px-4">
-          {groupBy === 'village'
-            ? villageGroups.map((group) => (
-                <section key={group.key}>
-                  <h2 className="condensed pb-2 font-display text-sm font-semibold tracking-widest text-sand/70 uppercase">
-                    {group.label}
-                    <span className="ml-2 tabular-nums text-sand/40">{group.venues.length}</span>
-                  </h2>
-                  <div className="flex flex-col gap-2">
-                    {group.venues.map((venue) => (
-                      <VenueRow
-                        key={venue.slug}
-                        venue={venue}
-                        starred={servicesFor(venue.slug).some((s) => favorites.includes(s.id))}
-                        onSelect={onSelectVenue}
-                      />
-                    ))}
-                  </div>
-                </section>
-              ))
-            : mealGroups.map((group) => (
-                <section key={group.key}>
-                  <h2 className="condensed pb-2 font-display text-sm font-semibold tracking-widest text-sand/70 uppercase">
-                    {group.label}
-                    <span className="ml-2 tabular-nums text-sand/40">{group.services.length}</span>
-                  </h2>
-                  <div className="flex flex-col gap-2">
-                    {group.services.map((service) => (
-                      <ServiceRow
-                        key={service.id}
-                        service={service}
-                        nowMinutes={nowMinutes}
-                        starred={favorites.includes(service.id)}
-                        note={notes[service.id]}
-                        overrides={overrides}
-                        onSelect={onSelectService}
-                      />
-                    ))}
-                  </div>
-                </section>
-              ))}
+          {groups.map((group) => (
+            <section key={group.key}>
+              <h2 className="condensed pb-2 font-display text-sm font-semibold tracking-widest text-sand/70 uppercase">
+                {group.label}
+                <span className="ml-2 tabular-nums text-sand/40">{group.venues.length}</span>
+              </h2>
+              <div className="flex flex-col gap-2">
+                {group.venues.map((venue) => (
+                  <VenueRow
+                    key={venue.slug}
+                    venue={venue}
+                    meal={meal}
+                    overrides={overrides}
+                    starred={servicesFor(venue.slug).some((s) => favorites.includes(s.id))}
+                    onSelect={onSelectVenue}
+                  />
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       )}
+
+      <PickerSheet
+        open={picker === 'village'}
+        title="Village"
+        options={villageChoices}
+        selected={village}
+        onPick={setVillage}
+        onClose={() => setPicker(null)}
+      />
+      <PickerSheet
+        open={picker === 'meal'}
+        title="Meal"
+        options={mealChoices}
+        selected={meal}
+        onPick={(id) => setMeal(id as Meal | null)}
+        onClose={() => setPicker(null)}
+      />
     </div>
   )
 }

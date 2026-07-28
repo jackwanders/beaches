@@ -61,12 +61,9 @@ export default function App() {
         <Home now={now} nowMinutes={nowMinutes} overrides={overrides} onSelect={openService} />
       ) : (
         <Explore
-          nowMinutes={nowMinutes}
           favorites={backup.favorites}
-          notes={backup.notes}
           overrides={overrides}
           onSelectVenue={openVenue}
-          onSelectService={openService}
         />
       )}
 
