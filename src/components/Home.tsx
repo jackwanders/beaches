@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { candidates, type MoodId } from '../lib/candidates'
-import { filterSummary } from '../lib/chips'
+import { cravingChipsAt, filterSummary, moodChipsAt } from '../lib/chips'
 import { clockState, minutesOfDay } from '../lib/clock'
 import { headline } from '../lib/display'
 import { useNow, youngestOverride } from '../lib/now'
@@ -22,15 +22,27 @@ export function Home() {
   const [cravings, setCravings] = useState<string[]>([])
   const [moods, setMoods] = useState<MoodId[]>([])
 
+  // Chips are scoped to the meal, so both rows change as the day turns over.
+  // Gap is clock-dependent (open-now across every meal), hence nowMinutes.
+  const youngest = youngestOverride(window.location.search)
+  const chipKey = state === 'gap' ? `gap:${nowMinutes}` : state
+  const cravingOptions = useMemo(() => cravingChipsAt(now, youngest), [chipKey])
+  const moodOptions = useMemo(() => moodChipsAt(now, youngest), [chipKey])
+
+  // A craving selected at lunch may not exist at dinner. Drop the selection
+  // when the meal turns over rather than filtering on a keyword the user can
+  // no longer see or unset. Moods survive — they are meal-agnostic predicates.
+  const lastState = useRef(state)
+  if (lastState.current !== state) {
+    lastState.current = state
+    if (cravings.length) setCravings([])
+  }
+
   // Recomputed on the minute and whenever a chip changes — not on every 15s
   // tick, so the list identity is stable enough for the reroll page to survive.
   const list = useMemo(
     () =>
-      candidates(now, {
-        cravings,
-        moods,
-        youngestInParty: youngestOverride(window.location.search),
-      }),
+      candidates(now, { cravings, moods, youngestInParty: youngest }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [nowMinutes, cravings, moods],
   )
@@ -54,6 +66,8 @@ export function Home() {
       <TimeRail now={now} />
 
       <Chips
+        cravingOptions={cravingOptions}
+        moodOptions={moodOptions}
         cravings={cravings}
         moods={moods}
         onCraving={(k) => setCravings((c) => toggle(c, k))}

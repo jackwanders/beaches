@@ -104,19 +104,39 @@ ambiguous".
 
 ## Step 6 — chips
 
-- **Craving chips are a curated twelve, not the whole 39-term vocabulary.** The
-  spec says "rendered from `keywordVocabulary`, ordered by how many services
-  carry each", but raw frequency ranks *attributes* above cravings: vegetarian
-  (17), fish (16), dessert (15), pastry (12), buffet (10), grill (10). Nobody
-  wants "grill" for dinner. Worse, frequency order would push **sushi and jerk
-  off the row entirely** — one service each — and "tapping sushi at 09:00
-  offers Soy at 17:30" is an explicit acceptance check. So the set is the
-  twelve the spec names and the *ordering* is by service count, which is the
-  only reading consistent with both halves of the spec. The full vocabulary
-  still backs step 8's search. — `src/lib/chips.ts`
-- **`seafood` maps to `fish`.** The spec names it; the vocabulary has no such
-  term. `fish` is the closest single keyword and the most-carried of the
-  seafood group.
+- **Chips are scoped to the meal, derived from the data.** The seed keywords
+  are already sharply meal-specific — breakfast carries eggs/pastry/pancakes
+  and no pizza; only Soy carries sushi and only at dinner. A global row spent
+  most of its width on things that could not be served for hours: intersected
+  with breakfast, the previous hand-curated twelve left exactly two live chips
+  and hid the three that matter. Both rows now come from the same pool
+  `candidates()` competes over — meal, party age, and open-now during the gap —
+  so a chip can never be offered when nothing behind it is servable.
+  — `cravingChipsAt` / `moodChipsAt` in `src/lib/chips.ts`
+- **A denylist, not an allowlist.** `vegetarian, buffet, grill, fried, cheese,
+  rice` describe a service rather than name a want, and `format`/`dressCode`
+  already cover that ground. Everything else in the vocabulary is a craving.
+  An allowlist would need re-curating by hand every time the data gained a term.
+- **The row is uncapped.** A frequency-ordered top-N drops exactly the chips
+  worth tapping: sushi and teppanyaki carry one dinner service each and rank
+  last, so a cap would leave Soy and Kimonos unreachable from the chips at any
+  hour. A test asserts every service is reachable from its own meal's row. The
+  row is a scrolling control surface, not a results list — the three-result
+  rule does not apply to it. Dinner is the widest at 20 chips.
+- **Moods are meal-scoped too.** Every `dressCode: "evening"` service is a
+  dinner service, so "Somewhere nice" was a guaranteed dead end at breakfast.
+- **The chip pool applies the party-age filter.** Caught by the reachability
+  test: `duck` is carried by Le Petit Chateau alone, which is 12+, so with
+  `HAS_UNDER_12` on it was a chip that could only ever return nothing.
+- **Selected cravings clear when the meal turns over**, since a keyword
+  selected at lunch may not exist at dinner. Moods persist — they are
+  meal-agnostic predicates.
+- **Consequence: "tapping sushi at 09:00 offers Soy at 17:30" is no longer
+  reachable from the chip row**, because sushi is not a breakfast craving. The
+  forward-shift behaviour in `candidates()` is unchanged and still tested; that
+  acceptance check now belongs to step 8's search, which spans the full
+  vocabulary. The forward shift is still reachable from the chips before a meal
+  opens — tapping `eggs` at 06:15 returns "opens at 6:30".
 - **"Surprise us" is not offered as a chip.** The spec defines it as "no
   filter, random from valid set", but step 4 already removed the randomness — a
   random pick would change the list between renders, which the spec forbids.
@@ -138,6 +158,28 @@ ambiguous".
   same `key`. Still never on a clock tick.
 - **The gap's "Also open" line is suppressed while filters are active** — it
   lists venues from the unfiltered set, which would contradict the chips.
+
+## Menu PDF extraction — measured, not recommended
+
+The spec files dish-level PDF parsing as progressive enhancement. Measured
+against all 42 mirrored menus with `pypdf`, it should **not** feed the craving
+chips:
+
+- **13 of 42 menus carry no extractable text** — the buffet signage the spec
+  predicted. Giuseppe's dinner yields the single word "buffet" and would lose
+  the hand-assigned pasta, pizza, salad, fish and dessert.
+- **Extraction is noisy.** It roughly doubles keywords per service, 5.1 → 10.7.
+  Soy gains `cheese` (cream cheese in a roll) and Butch's, a steakhouse, gains
+  `jerk`, `curry`, `ice cream` and `pork` from side dishes and prose. Tapping a
+  craving would stop narrowing anything.
+- **It also misses.** `teppanyaki` at Kimonos, `lobster` at Schooners and
+  `pizza` at Pinta live in styled or rasterised text and never extract, so the
+  hand-assignment is strictly better where both exist.
+
+The hand-assigned keywords are the higher-precision layer and should stay the
+chip vocabulary. Extraction belongs where the spec put it — under the keyword
+hits in step 8's search, where recall helps and a false positive costs a
+scroll rather than a wrong recommendation.
 
 ## Carried forward
 

@@ -1,5 +1,4 @@
 import { MOOD_LABELS, type MoodId } from '../lib/candidates'
-import { CRAVING_CHIPS, MOOD_CHIPS } from '../lib/chips'
 
 function Chip({
   label,
@@ -31,12 +30,16 @@ function Chip({
 const ROW = 'flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
 
 export function Chips({
+  cravingOptions,
+  moodOptions,
   cravings,
   moods,
   onCraving,
   onMood,
   onClear,
 }: {
+  cravingOptions: string[]
+  moodOptions: MoodId[]
   cravings: string[]
   moods: MoodId[]
   onCraving: (keyword: string) => void
@@ -48,7 +51,7 @@ export function Chips({
   return (
     <div className="flex flex-col gap-2 pt-4">
       <div className={ROW} role="group" aria-label="Cravings">
-        {CRAVING_CHIPS.map((keyword) => (
+        {cravingOptions.map((keyword) => (
           <Chip
             key={keyword}
             label={keyword}
@@ -59,7 +62,7 @@ export function Chips({
       </div>
 
       <div className={ROW} role="group" aria-label="Moods">
-        {MOOD_CHIPS.map((mood) => (
+        {moodOptions.map((mood) => (
           <Chip
             key={mood}
             label={MOOD_LABELS[mood]}
