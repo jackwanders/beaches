@@ -4,7 +4,8 @@ import { thumbUrl } from '../lib/assets'
 import { isOpenAt } from '../lib/candidates'
 import { MEAL_LABELS, badgesFor, hoursText, villageName } from '../lib/display'
 import { mealsFor, servicesByMeal, servicesFor, venuesByVillage, type GroupBy } from '../lib/explore'
-import type { Service, Venue } from '../types'
+import { isClosedByOverride, isOverridden, withOverride } from '../lib/overrides'
+import type { Overrides, Service, Venue } from '../types'
 import { Badge } from './Badge'
 
 const CARD =
@@ -89,17 +90,21 @@ function ServiceRow({
   nowMinutes,
   starred,
   note,
+  overrides,
   onSelect,
 }: {
   service: Service
   nowMinutes: number
   starred: boolean
   note?: string
+  overrides: Overrides
   onSelect: (service: Service) => void
 }) {
   const venue = venueBySlug.get(service.venue)
-  const open = venue?.operational !== false && isOpenAt(service, nowMinutes)
-  const badges = badgesFor(service)
+  const effective = withOverride(service, overrides)
+  const notServing = isClosedByOverride(service.id, overrides)
+  const open = !notServing && venue?.operational !== false && isOpenAt(effective, nowMinutes)
+  const badges = badgesFor(effective)
 
   return (
     <article className={CARD}>
@@ -119,9 +124,16 @@ function ServiceRow({
           {venue?.cuisine ? ` · ${venue.cuisine}` : ''}
         </p>
 
-        <p className={`mt-0.5 text-sm tabular-nums ${open ? 'text-turquoise' : 'text-sand/60'}`}>
-          {hoursText(service)}
+        <p
+          className={`mt-0.5 text-sm tabular-nums ${
+            notServing ? 'text-signal line-through' : open ? 'text-turquoise' : 'text-sand/60'
+          }`}
+        >
+          {hoursText(effective)}
         </p>
+        {isOverridden(service.id, overrides) && (
+          <p className="text-[12px] text-signal">edited</p>
+        )}
 
         {venue && <Closed venue={venue} />}
         {note && <p className="mt-1 text-sm leading-snug text-sand">{note}</p>}
@@ -142,12 +154,14 @@ export function Explore({
   nowMinutes,
   favorites,
   notes,
+  overrides,
   onSelectVenue,
   onSelectService,
 }: {
   nowMinutes: number
   favorites: string[]
   notes: Record<string, string>
+  overrides: Overrides
   onSelectVenue: (venue: Venue) => void
   onSelectService: (service: Service) => void
 }) {
@@ -241,6 +255,7 @@ export function Explore({
                         nowMinutes={nowMinutes}
                         starred={favorites.includes(service.id)}
                         note={notes[service.id]}
+                        overrides={overrides}
                         onSelect={onSelectService}
                       />
                     ))}

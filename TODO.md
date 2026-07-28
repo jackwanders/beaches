@@ -319,10 +319,37 @@ chip vocabulary. Extraction belongs where the spec put it — under the keyword
 hits in step 8's search, where recall helps and a false positive costs a
 scroll rather than a wrong recommendation.
 
-## Carried forward
+## Step 11 — override editor
 
-- **Overrides are applied but not editable.** `applyOverrides` runs before every
-  time comparison from day one; the editor UI is step 10.
+- **Overrides were dead code until this step.** `applyOverrides` existed from
+  step 3 and `candidates()` accepted an `overrides` option, but **nothing ever
+  called `loadOverrides()`** — every surface passed `{}`. The step-5 note
+  claiming they "run before every time comparison from day one" was true of the
+  function and false of the app. They are now threaded through `candidates()`,
+  `search()`, the detail sheet and Explore.
+- **Editing happens on the detail sheet, not in a settings list.** The spec
+  describes "a settings screen that lets the user edit any service's hours",
+  but the correction gets noticed while looking at the wrong hours — so "Fix
+  hours" sits under the hours it fixes. Picking a service out of a list of 44
+  first would be the long way round. Settings keeps the *review*: which
+  services you have corrected, and one button to reset them all.
+- **The editor covers what the spec's known-gaps list needs**: `opens` and
+  `closes` via native `<input type="time">` (a real picker on a phone, no
+  custom widget), `closedDays` as seven day chips for the check-in sheet, and
+  a "Not serving" toggle for `closed`.
+- **A closed service stays visible where you can undo it.** `applyOverrides`
+  drops it, because a recommendation must never name a place you marked shut;
+  `withOverride` keeps it for the detail sheet and Explore, struck through and
+  marked, so the edit is reversible.
+- **An override holding nothing is deleted, not stored empty.** Clearing every
+  field removes the key, so `isOverridden` stays honest and the Settings list
+  does not fill with no-op entries.
+- **Resetting overrides leaves stars and notes alone.** They are separate keys
+  and separate kinds of thing: overrides are corrections to the seed data,
+  stars and notes are yours. The backup export deliberately does not include
+  overrides.
+
+## Carried forward
 - **`menuUrl` is still unused.** Step 7's detail sheet is the first thing that
   links a menu PDF.
 - **No favicon yet** — `/favicon.ico` 404s in the console. Icons and manifest

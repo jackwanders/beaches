@@ -4,8 +4,10 @@ import { assetUrl, menuUrl } from '../lib/assets'
 import { isOpenAt } from '../lib/candidates'
 import { MEAL_LABELS } from '../lib/display'
 import { badgesFor, byMealOrder, hoursText, villageName } from '../lib/display'
-import type { Service } from '../types'
+import { isClosedByOverride, isOverridden, withOverride } from '../lib/overrides'
+import type { Overrides, Service } from '../types'
 import { Badge } from './Badge'
+import { HoursEditor } from './HoursEditor'
 
 function ServiceBlock({
   service,
@@ -13,21 +15,33 @@ function ServiceBlock({
   highlight,
   starred,
   note,
+  overrides,
   onToggleStar,
   onNote,
+  onOverride,
+  onResetOverride,
 }: {
   service: Service
   nowMinutes: number
   highlight: boolean
   starred: boolean
   note: string
+  overrides: Overrides
   onToggleStar: (id: string) => void
   onNote: (id: string, note: string) => void
+  onOverride: (id: string, patch: Overrides[string]) => void
+  onResetOverride: (id: string) => void
 }) {
-  const badges = badgesFor(service)
-  const open = isOpenAt(service, nowMinutes)
+  // Everything below reads the corrected service, so the sheet shows what the
+  // recommendations are actually using.
+  const effective = withOverride(service, overrides)
+  const edited = isOverridden(service.id, overrides)
+  const notServing = isClosedByOverride(service.id, overrides)
+  const badges = badgesFor(effective)
+  const open = !notServing && isOpenAt(effective, nowMinutes)
   const menu = menuUrl(service)
   const [editingNote, setEditingNote] = useState(false)
+  const [editingHours, setEditingHours] = useState(false)
 
   return (
     <section
@@ -40,8 +54,12 @@ function ServiceBlock({
           {MEAL_LABELS[service.meal]}
         </h3>
         <div className="flex items-baseline gap-2">
-          <span className={`text-sm tabular-nums ${open ? 'text-turquoise' : 'text-sand/60'}`}>
-            {hoursText(service)}
+          <span
+            className={`text-sm tabular-nums ${
+              notServing ? 'text-signal line-through' : open ? 'text-turquoise' : 'text-sand/60'
+            }`}
+          >
+            {hoursText(effective)}
           </span>
           {/* Starring is per service, not per venue: Neptunes at lunch and at
               dinner are different meals out. */}
@@ -79,6 +97,32 @@ function ServiceBlock({
 
       {service.dataWarning && (
         <p className="mt-2 text-[13px] leading-snug text-signal">{service.dataWarning}</p>
+      )}
+
+      {edited && (
+        <p className="mt-2 text-[12px] text-signal">
+          {notServing ? 'Marked not serving' : 'Hours edited on this device'}
+        </p>
+      )}
+
+      {editingHours ? (
+        <HoursEditor
+          service={service}
+          override={overrides[service.id]}
+          onChange={(patch) => onOverride(service.id, patch)}
+          onReset={() => {
+            onResetOverride(service.id)
+            setEditingHours(false)
+          }}
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setEditingHours(true)}
+          className="mt-2 block text-sm text-sand/60 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
+        >
+          Fix hours
+        </button>
       )}
 
       {/* Notes are independent of stars. "Kids won't eat here" is a note worth
@@ -142,16 +186,22 @@ export function DetailSheet({
   nowMinutes,
   favorites,
   notes,
+  overrides,
   onToggleStar,
   onNote,
+  onOverride,
+  onResetOverride,
   onClose,
 }: {
   target: SheetTarget | null
   nowMinutes: number
   favorites: string[]
   notes: Record<string, string>
+  overrides: Overrides
   onToggleStar: (id: string) => void
   onNote: (id: string, note: string) => void
+  onOverride: (id: string, patch: Overrides[string]) => void
+  onResetOverride: (id: string) => void
   onClose: () => void
 }) {
   const ref = useRef<HTMLDialogElement>(null)
@@ -245,8 +295,11 @@ export function DetailSheet({
                 highlight={s.id === target?.focusServiceId}
                 starred={favorites.includes(s.id)}
                 note={notes[s.id] ?? ''}
+                overrides={overrides}
                 onToggleStar={onToggleStar}
                 onNote={onNote}
+                onOverride={onOverride}
+                onResetOverride={onResetOverride}
               />
             ))}
           </div>

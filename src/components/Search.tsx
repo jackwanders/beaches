@@ -4,7 +4,7 @@ import { thumbUrl } from '../lib/assets'
 import { minutesOfDay } from '../lib/clock'
 import { MEAL_LABELS, serviceStatus, villageName, type StatusTone } from '../lib/display'
 import { search, suggest, type SearchHit } from '../lib/search'
-import type { Service } from '../types'
+import type { Overrides, Service } from '../types'
 
 const TONE_TEXT: Record<StatusTone, string> = {
   open: 'text-turquoise',
@@ -68,11 +68,13 @@ function Result({
 export function Search({
   open,
   now,
+  overrides,
   onClose,
   onSelect,
 }: {
   open: boolean
   now: Date
+  overrides: Overrides
   onClose: () => void
   onSelect: (service: Service) => void
 }) {
@@ -101,7 +103,10 @@ export function Search({
 
   const nowMinutes = minutesOfDay(now)
   const suggestions = useMemo(() => suggest(query), [query])
-  const hits = useMemo(() => (term ? search(term, now) : []), [term, nowMinutes])
+  const hits = useMemo(
+    () => (term ? search(term, now, { overrides }) : []),
+    [term, nowMinutes, overrides],
+  )
 
   const pick = (keyword: string) => {
     setTerm(keyword)

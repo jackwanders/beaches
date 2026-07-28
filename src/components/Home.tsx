@@ -4,7 +4,7 @@ import { cravingChipsAt, filterSummary, moodChipsAt } from '../lib/chips'
 import { clockState } from '../lib/clock'
 import { headline } from '../lib/display'
 import { youngestOverride } from '../lib/now'
-import type { Service } from '../types'
+import type { Overrides, Service } from '../types'
 import { Chips } from './Chips'
 import { Recommendations } from './Recommendations'
 import { TimeRail } from './TimeRail'
@@ -18,10 +18,12 @@ function toggle<T>(list: T[], value: T): T[] {
 export function Home({
   now,
   nowMinutes,
+  overrides,
   onSelect,
 }: {
   now: Date
   nowMinutes: number
+  overrides: Overrides
   onSelect: (service: Service) => void
 }) {
   const state = clockState(now)
@@ -48,9 +50,9 @@ export function Home({
   // Recomputed on the minute and whenever a chip changes — not on every 15s
   // tick, so the list identity is stable enough for the reroll page to survive.
   const list = useMemo(
-    () => candidates(now, { cravings, moods, youngestInParty: youngest }),
+    () => candidates(now, { cravings, moods, youngestInParty: youngest, overrides }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [nowMinutes, cravings, moods],
+    [nowMinutes, cravings, moods, overrides],
   )
 
   const lead = headline(state, list)

@@ -3,6 +3,7 @@ import { clockState, minutesOfDay } from './lib/clock'
 import { useFavorites } from './lib/favorites'
 import { dismissInstallPrompt, readInstallContext, shouldPromptInstall } from './lib/ios'
 import { useNow } from './lib/now'
+import { useOverrides } from './lib/overrides'
 import { defaultMode, type Mode } from './lib/trip'
 import type { Service, Venue } from './types'
 import { DetailSheet, type SheetTarget } from './components/DetailSheet'
@@ -28,6 +29,7 @@ export default function App() {
   const [installDismissed, setInstallDismissed] = useState(false)
 
   const { backup, toggleStar, setNote, importBackup } = useFavorites()
+  const { overrides, setOverride, clearOverride, clearAll } = useOverrides()
 
   // A service row focuses the service it names; a venue row opens the sheet
   // with nothing highlighted, because there is no one meal it refers to.
@@ -56,12 +58,13 @@ export default function App() {
       />
 
       {mode === 'now' ? (
-        <Home now={now} nowMinutes={nowMinutes} onSelect={openService} />
+        <Home now={now} nowMinutes={nowMinutes} overrides={overrides} onSelect={openService} />
       ) : (
         <Explore
           nowMinutes={nowMinutes}
           favorites={backup.favorites}
           notes={backup.notes}
+          overrides={overrides}
           onSelectVenue={openVenue}
           onSelectService={openService}
         />
@@ -86,12 +89,20 @@ export default function App() {
         </div>
       )}
 
-      <Search open={searching} now={now} onClose={() => setSearching(false)} onSelect={openService} />
+      <Search
+        open={searching}
+        now={now}
+        overrides={overrides}
+        onClose={() => setSearching(false)}
+        onSelect={openService}
+      />
 
       <Settings
         open={settingsOpen}
         backup={backup}
+        overrides={overrides}
         onImport={importBackup}
+        onClearOverrides={clearAll}
         onClose={() => setSettingsOpen(false)}
       />
 
@@ -100,8 +111,11 @@ export default function App() {
         nowMinutes={nowMinutes}
         favorites={backup.favorites}
         notes={backup.notes}
+        overrides={overrides}
         onToggleStar={toggleStar}
         onNote={setNote}
+        onOverride={setOverride}
+        onResetOverride={clearOverride}
         onClose={() => setSheet(null)}
       />
     </main>

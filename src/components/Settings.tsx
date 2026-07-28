@@ -1,15 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
+import { venueBySlug } from '../data'
 import type { Backup } from '../lib/favorites'
+import { MEAL_LABELS } from '../lib/display'
+import { services } from '../data'
+import { toTimeInput } from '../lib/overrides'
+import type { Overrides } from '../types'
 
 export function Settings({
   open,
   backup,
+  overrides,
   onImport,
+  onClearOverrides,
   onClose,
 }: {
   open: boolean
   backup: Backup
+  overrides: Overrides
   onImport: (raw: string) => Backup
+  onClearOverrides: () => void
   onClose: () => void
 }) {
   const ref = useRef<HTMLDialogElement>(null)
@@ -29,6 +38,24 @@ export function Settings({
       setMessage(null)
     }
   }, [open])
+
+  // Overrides are corrections to the seed data, not personal state, so they
+  // are listed here for review rather than folded into the backup.
+  const edited = Object.entries(overrides).map(([id, o]) => {
+    const service = services.find((s) => s.id === id)
+    const venue = service ? venueBySlug.get(service.venue) : undefined
+    const parts = [
+      o.closed && 'not serving',
+      o.opens !== undefined && `opens ${toTimeInput(o.opens)}`,
+      o.closes !== undefined && `closes ${toTimeInput(o.closes)}`,
+      o.closedDays?.length && `${o.closedDays.length} day${o.closedDays.length === 1 ? '' : 's'} off`,
+    ].filter(Boolean)
+    return {
+      id,
+      label: service ? `${venue?.name ?? service.venue} ${MEAL_LABELS[service.meal].toLowerCase()}` : id,
+      summary: parts.join(', '),
+    }
+  })
 
   const json = JSON.stringify(backup, null, 2)
   const starCount = backup.favorites.length
@@ -131,6 +158,33 @@ export function Settings({
             Restore
           </button>
         </section>
+
+        {edited.length > 0 && (
+          <section className="space-y-2">
+            <h3 className="text-[13px] font-semibold tracking-wide text-sand">
+              CORRECTED HOURS
+            </h3>
+            <p className="text-[13px] leading-snug text-sand/70">
+              The seed data is a July snapshot. These are the changes you have made on this
+              device; the recommendations use them.
+            </p>
+            <ul className="space-y-1">
+              {edited.map(({ id, label, summary }) => (
+                <li key={id} className="text-[13px] text-sand">
+                  <span className="text-foam">{label}</span>{' '}
+                  <span className="text-sand/60">— {summary}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={onClearOverrides}
+              className="w-full rounded-xl border border-signal/50 py-3 text-sm font-semibold text-signal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise active:bg-signal/10"
+            >
+              Reset all to published hours
+            </button>
+          </section>
+        )}
 
         {message && (
           <p
