@@ -1,48 +1,81 @@
 import { describe, expect, test } from 'vitest'
-import { services, venueBySlug, villages } from '../data'
-import { exploreGroups } from './explore'
+import { services, venueBySlug, venues, villages } from '../data'
+import { mealsFor, servicesByMeal, venuesByVillage } from './explore'
 import { defaultMode } from './trip'
 
-const flat = (groupBy: 'village' | 'meal') =>
-  exploreGroups(groupBy).flatMap((g) => g.services.map((s) => s.id))
+const flatVenues = () => venuesByVillage().flatMap((g) => g.venues.map((v) => v.slug))
+const flatServices = () => servicesByMeal().flatMap((g) => g.services.map((s) => s.id))
 
-describe('exploreGroups', () => {
-  test('every service appears exactly once, whichever way it is grouped', () => {
-    for (const groupBy of ['village', 'meal'] as const) {
-      const ids = flat(groupBy)
-      expect(ids.length, `${groupBy} lost or duplicated services`).toBe(services.length)
-      expect(new Set(ids).size).toBe(services.length)
-    }
+describe('venuesByVillage', () => {
+  test('lists every venue exactly once — no repeats per service', () => {
+    // The point of grouping by village: Barefoot serves three meals and is
+    // still one row.
+    const slugs = flatVenues()
+    expect(slugs.length).toBe(venues.length)
+    expect(new Set(slugs).size).toBe(venues.length)
+    expect(slugs.filter((s) => s === 'barefoot').length).toBe(1)
   })
 
   test("Mario's is reachable here and nowhere else", () => {
-    // operational: false, so candidates() and search() both exclude it. The
-    // spec requires it stay visible in the browse list.
-    expect(flat('village')).toContain('marios-dinner')
-  })
-
-  test('12+ services are catalogued rather than filtered out', () => {
-    // The party filter is for recommendations, not for reading about the
-    // resort in July.
-    expect(flat('meal')).toContain('sky-dinner')
-    expect(flat('meal')).toContain('le-petit-chateau-dinner')
+    expect(flatVenues()).toContain('marios')
   })
 
   test('skips villages with no venues', () => {
-    // Seaside Village is in the data and holds nothing.
-    const seaside = villages.find((v) => v.id === 'seaside')
-    expect(seaside, 'expected a seaside village in the seed data').toBeTruthy()
-    expect(exploreGroups('village').map((g) => g.key)).not.toContain('seaside')
+    expect(villages.find((v) => v.id === 'seaside')).toBeTruthy()
+    expect(venuesByVillage().map((g) => g.key)).not.toContain('seaside')
   })
 
-  test('village groups follow the order the resort lists them', () => {
-    const keys = exploreGroups('village').map((g) => g.key)
-    const expected = villages.map((v) => v.id).filter((id) => keys.includes(id))
-    expect(keys).toEqual(expected)
+  test('follows the order the resort lists its villages', () => {
+    const keys = venuesByVillage().map((g) => g.key)
+    expect(keys).toEqual(villages.map((v) => v.id).filter((id) => keys.includes(id)))
   })
 
-  test('meal groups run in day order, not alphabetical', () => {
-    expect(exploreGroups('meal').map((g) => g.key)).toEqual([
+  test('sorts venues alphabetically within a village', () => {
+    for (const group of venuesByVillage()) {
+      const names = group.venues.map((v) => v.name)
+      expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)))
+    }
+  })
+
+  test('the starred filter keeps a venue if any of its services is starred', () => {
+    // Only dinner is starred; the venue still appears, once.
+    const groups = venuesByVillage({ starredOnly: true, favorites: ['barefoot-dinner'] })
+    expect(groups.flatMap((g) => g.venues.map((v) => v.slug))).toEqual(['barefoot'])
+  })
+
+  test('starring nothing yields no groups rather than empty headings', () => {
+    expect(venuesByVillage({ starredOnly: true, favorites: [] })).toEqual([])
+  })
+})
+
+describe('mealsFor', () => {
+  test('returns a venue’s meals in day order', () => {
+    expect(mealsFor('barefoot')).toEqual(['breakfast', 'lunch', 'dinner'])
+  })
+
+  test('handles a single-service venue', () => {
+    expect(mealsFor('soy')).toEqual(['dinner'])
+  })
+
+  test('is empty for a slug that serves nothing', () => {
+    expect(mealsFor('nowhere')).toEqual([])
+  })
+})
+
+describe('servicesByMeal', () => {
+  test('every service appears exactly once', () => {
+    const ids = flatServices()
+    expect(ids.length).toBe(services.length)
+    expect(new Set(ids).size).toBe(services.length)
+  })
+
+  test('12+ services are catalogued rather than filtered out', () => {
+    expect(flatServices()).toContain('sky-dinner')
+    expect(flatServices()).toContain('le-petit-chateau-dinner')
+  })
+
+  test('groups run in day order, not alphabetical', () => {
+    expect(servicesByMeal().map((g) => g.key)).toEqual([
       'breakfast',
       'lunch',
       'snacks',
@@ -51,8 +84,8 @@ describe('exploreGroups', () => {
     ])
   })
 
-  test('services sort by venue name within a group', () => {
-    for (const group of exploreGroups('village')) {
+  test('sorts by venue name within a meal', () => {
+    for (const group of servicesByMeal()) {
       const names = group.services.map((s) => venueBySlug.get(s.venue)?.name ?? s.venue)
       expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)))
     }
@@ -60,14 +93,10 @@ describe('exploreGroups', () => {
 
   test('the starred filter narrows to exactly what was starred', () => {
     const favorites = ['neptunes-dinner', 'sky-dinner']
-    const groups = exploreGroups('meal', { starredOnly: true, favorites })
+    const groups = servicesByMeal({ starredOnly: true, favorites })
     expect(groups.flatMap((g) => g.services.map((s) => s.id)).sort()).toEqual(
       [...favorites].sort(),
     )
-  })
-
-  test('starring nothing yields no groups rather than an empty heading', () => {
-    expect(exploreGroups('village', { starredOnly: true, favorites: [] })).toEqual([])
   })
 })
 

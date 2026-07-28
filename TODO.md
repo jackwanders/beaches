@@ -264,11 +264,18 @@ ambiguous".
 - **The app opens on the mode the trip dates imply.** Before and after the
   trip, Explore; during it, Now. One tap overrides. This is the first use of
   `CONFIG.TRIP_START` and `TRIP_NIGHTS`, which were dead until now.
-- **Explore lists services, not venues**, in both groupings. Stars and notes
-  are per service, and "never collapse a service back to its venue" is the
-  app's core rule; a single row type also keeps the starred filter coherent.
-  Most venues run one or two services, so the repetition is mild — only five
-  run three.
+- **The unit follows the grouping: venues by village, services by meal.** An
+  earlier pass listed services in both, which put "Barefoot by the Sea" on
+  three consecutive rows — clutter in a browse list, which is the one thing
+  this app exists to avoid. The village row names which meals a venue serves
+  instead ("breakfast · lunch · dinner") and leaves the hours to the sheet.
+  Grouping by meal stays service-level, because a meal *is* a service.
+- **Tapping a venue opens its sheet with nothing highlighted.** `DetailSheet`
+  takes a `SheetTarget` of `{ venueSlug, focusServiceId? }`; a village row omits
+  the focus because there is no one meal it refers to, while service rows and
+  home cards still highlight theirs.
+- **Under the starred filter, a village row survives if any of its services is
+  starred**, since the row is the venue.
 - **Explore is the catalogue, so it deliberately breaks the filters every other
   surface applies.** Mario's appears despite `operational: false` — this is the
   only screen where it is reachable at all, and it makes the step-7

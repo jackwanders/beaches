@@ -131,8 +131,14 @@ function ServiceBlock({
   )
 }
 
+/**
+ * Opening by venue with no `focusServiceId` is a real state: Explore's village
+ * list is venue-level, so there is no one service to highlight.
+ */
+export type SheetTarget = { venueSlug: string; focusServiceId?: string }
+
 export function DetailSheet({
-  service,
+  target,
   nowMinutes,
   favorites,
   notes,
@@ -140,7 +146,7 @@ export function DetailSheet({
   onNote,
   onClose,
 }: {
-  service: Service | null
+  target: SheetTarget | null
   nowMinutes: number
   favorites: string[]
   notes: Record<string, string>
@@ -156,22 +162,22 @@ export function DetailSheet({
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
-    if (service && !dialog.open) dialog.showModal()
-    if (!service && dialog.open) dialog.close()
-  }, [service])
+    if (target && !dialog.open) dialog.showModal()
+    if (!target && dialog.open) dialog.close()
+  }, [target])
 
   // showModal blocks interaction behind the sheet but iOS will still scroll
   // the page under it.
   useEffect(() => {
-    if (!service) return
+    if (!target) return
     const previous = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = previous
     }
-  }, [service])
+  }, [target])
 
-  const venue = service ? venueBySlug.get(service.venue) : undefined
+  const venue = target ? venueBySlug.get(target.venueSlug) : undefined
   const hero = assetUrl(venue?.heroSource)
 
   // Every service this venue runs, not just the one tapped — Sky is 12+ at
@@ -194,7 +200,7 @@ export function DetailSheet({
       // scrolling happens on the body below.
       className="fixed inset-x-0 top-auto bottom-0 m-0 max-h-[88dvh] w-full max-w-md flex-col overflow-hidden rounded-t-3xl bg-ocean p-0 text-foam backdrop:bg-black/70 open:flex sm:mx-auto"
     >
-      {venue && service && (
+      {venue && (
         <>
           <div className="relative shrink-0">
             {hero && <img src={hero} alt="" className="h-44 w-full object-cover" />}
@@ -236,7 +242,7 @@ export function DetailSheet({
                 key={s.id}
                 service={s}
                 nowMinutes={nowMinutes}
-                highlight={s.id === service.id}
+                highlight={s.id === target?.focusServiceId}
                 starred={favorites.includes(s.id)}
                 note={notes[s.id] ?? ''}
                 onToggleStar={onToggleStar}

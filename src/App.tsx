@@ -4,8 +4,8 @@ import { useFavorites } from './lib/favorites'
 import { dismissInstallPrompt, readInstallContext, shouldPromptInstall } from './lib/ios'
 import { useNow } from './lib/now'
 import { defaultMode, type Mode } from './lib/trip'
-import type { Service } from './types'
-import { DetailSheet } from './components/DetailSheet'
+import type { Service, Venue } from './types'
+import { DetailSheet, type SheetTarget } from './components/DetailSheet'
 import { Explore } from './components/Explore'
 import { Header } from './components/Header'
 import { Home } from './components/Home'
@@ -22,12 +22,18 @@ export default function App() {
 
   // Opens on whichever mode the trip dates imply; one tap overrides it.
   const [mode, setMode] = useState<Mode>(() => defaultMode(new Date()))
-  const [selected, setSelected] = useState<Service | null>(null)
+  const [sheet, setSheet] = useState<SheetTarget | null>(null)
   const [searching, setSearching] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [installDismissed, setInstallDismissed] = useState(false)
 
   const { backup, toggleStar, setNote, importBackup } = useFavorites()
+
+  // A service row focuses the service it names; a venue row opens the sheet
+  // with nothing highlighted, because there is no one meal it refers to.
+  const openService = (service: Service) =>
+    setSheet({ venueSlug: service.venue, focusServiceId: service.id })
+  const openVenue = (venue: Venue) => setSheet({ venueSlug: venue.slug })
 
   // Only asks once there is a star or a note to lose, and never again once
   // dismissed or once the app is running from the home screen.
@@ -50,13 +56,14 @@ export default function App() {
       />
 
       {mode === 'now' ? (
-        <Home now={now} nowMinutes={nowMinutes} onSelect={setSelected} />
+        <Home now={now} nowMinutes={nowMinutes} onSelect={openService} />
       ) : (
         <Explore
           nowMinutes={nowMinutes}
           favorites={backup.favorites}
           notes={backup.notes}
-          onSelect={setSelected}
+          onSelectVenue={openVenue}
+          onSelectService={openService}
         />
       )}
 
@@ -79,7 +86,7 @@ export default function App() {
         </div>
       )}
 
-      <Search open={searching} now={now} onClose={() => setSearching(false)} onSelect={setSelected} />
+      <Search open={searching} now={now} onClose={() => setSearching(false)} onSelect={openService} />
 
       <Settings
         open={settingsOpen}
@@ -89,13 +96,13 @@ export default function App() {
       />
 
       <DetailSheet
-        service={selected}
+        target={sheet}
         nowMinutes={nowMinutes}
         favorites={backup.favorites}
         notes={backup.notes}
         onToggleStar={toggleStar}
         onNote={setNote}
-        onClose={() => setSelected(null)}
+        onClose={() => setSheet(null)}
       />
     </main>
   )
