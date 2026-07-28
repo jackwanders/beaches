@@ -12,9 +12,10 @@
  *   npm run mirror
  */
 import { existsSync } from 'node:fs'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
-import { dirname, join, resolve } from 'node:path'
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
+import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import sharp from 'sharp'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = join(root, 'public')
@@ -84,6 +85,36 @@ async function run(jobs: Job[]): Promise<{ ok: number; skipped: number; failed: 
   return { ok, skipped, failed }
 }
 
+/** Home-screen card thumbnails: 128px for a 64px slot at 2x. */
+const THUMB_WIDTH = 128
+
+/**
+ * The heroes are 1920px marketing shots averaging 600KB. Three of them on the
+ * home screen is ~1.8MB of first paint on resort wifi for three 64px squares,
+ * so the cards read from a downscaled copy instead. The full hero is still
+ * what the detail sheet uses.
+ */
+async function makeThumbs(): Promise<number> {
+  const from = join(publicDir, 'assets/venues')
+  const to = join(publicDir, 'assets/thumbs')
+  if (!existsSync(from)) return 0
+
+  await mkdir(to, { recursive: true })
+  let made = 0
+
+  for (const file of await readdir(from)) {
+    if (!/\.(jpe?g|png|webp)$/i.test(file)) continue
+    const dest = join(to, `${basename(file).replace(/\.[^.]+$/, '')}.jpg`)
+    if (existsSync(dest)) continue
+    await sharp(join(from, file))
+      .resize(THUMB_WIDTH, THUMB_WIDTH, { fit: 'cover' })
+      .jpeg({ quality: 72, mozjpeg: true })
+      .toFile(dest)
+    made++
+  }
+  return made
+}
+
 async function main() {
   const venuesPath = join(root, 'data/venues.json')
   const servicesPath = join(root, 'data/services.json')
@@ -143,7 +174,11 @@ async function main() {
   await writeFile(venuesPath, JSON.stringify(venuesDoc, null, 2) + '\n')
   await writeFile(servicesPath, JSON.stringify(servicesDoc, null, 2) + '\n')
 
-  console.log(`\ndownloaded ${ok} · already present ${skipped} · failed ${failed.length}`)
+  const thumbs = await makeThumbs()
+
+  console.log(
+    `\ndownloaded ${ok} · already present ${skipped} · failed ${failed.length} · thumbnails ${thumbs}`,
+  )
   if (failed.length) {
     console.log('\nLeft pointing at the CDN:')
     for (const f of failed) console.log(`  ${f}`)

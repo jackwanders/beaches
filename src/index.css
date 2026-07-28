@@ -1,5 +1,60 @@
 @import 'tailwindcss';
 
+/*
+ * Archivo via `wdth`, not the default entrypoint: that file declares
+ * `font-stretch: 62% 125%`, the real width axis. Without it the condensed
+ * signage cut has to be faked with scale-x, which looks wrong.
+ */
+@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource-variable/inter/wght.css';
+
+@theme {
+  --color-ocean: #0b2b3c; /* page ground */
+  --color-surface: #10394d; /* card, one step up from the ground */
+  --color-turquoise: #39c7c0;
+  --color-sand: #e8dcc4;
+  --color-signal: #f07830; /* closing soon. nothing else. */
+  --color-foam: #f7fafa;
+
+  /*
+   * One colour per meal, walking the day from morning light through midday
+   * water into dusk and night. Deliberately all cool-to-neutral: signal orange
+   * has to keep meaning "closing soon", so no meal may borrow a warm accent.
+   */
+  --color-breakfast: #e8dcc4; /* low sun on sand */
+  --color-lunch: #39c7c0; /* Grace Bay at noon */
+  --color-dinner: #4b93dd; /* deeper water, late light */
+  --color-latenight: #7a6bd0; /* after dark */
+
+  /*
+   * The gap is the only window with nothing being served, so it is the only
+   * one with no hue: a flat overcast slate between two vivid meals. It reads
+   * as "off" precisely because everything either side of it is saturated.
+   */
+  --color-gap: #7c93a1;
+
+  --font-display: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
   color-scheme: dark;
+}
+
+body {
+  background: var(--color-ocean);
+}
+
+/* Venue names at signage scale. */
+@utility condensed {
+  font-stretch: 80%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

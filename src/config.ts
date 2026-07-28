@@ -26,4 +26,9 @@ export const CONFIG = {
 
   // Recommendation count. The whole product thesis.
   RESULTS: 3,
+
+  // How close to closing before a card turns signal orange. Enough time to
+  // cross a 600m property and be seated; 30 is too tight for a buffet, 60
+  // would light up a third of dinner service.
+  CLOSING_SOON_MINUTES: 45,
 }

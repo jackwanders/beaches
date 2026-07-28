@@ -8,21 +8,31 @@ export function minutesOfDay(t: Date): number {
 export const MINUTES_PER_DAY = 1440
 
 /**
- * Meal inference, half-open intervals `[start, end)`:
+ * The dining day, half-open intervals `[start, end)`. `lateNight` runs past
+ * midnight, so its end is expressed in *extended* minutes — 1560 is 02:00 the
+ * next morning.
  *
- *   06:00 breakfast · 11:00 lunch · 15:30 gap · 17:00 dinner · 21:30 lateNight
- *
- * lateNight runs through 02:00. The spec leaves 02:00–06:00 undefined; it maps
- * to breakfast so the never-zero rule surfaces "Schooners opens at 7:30"
- * rather than an empty late-night list.
+ * Both `clockState` and the time rail read this one table, so they cannot
+ * disagree about where a meal ends. Editing a boundary here moves the rail and
+ * the recommendation query together.
  */
+export const MEAL_WINDOWS = [
+  { state: 'breakfast', start: 360, end: 660 }, // 06:00 → 11:00
+  { state: 'lunch', start: 660, end: 930 }, // 11:00 → 15:30
+  { state: 'gap', start: 930, end: 1020 }, // 15:30 → 17:00
+  { state: 'dinner', start: 1020, end: 1290 }, // 17:00 → 21:30
+  { state: 'lateNight', start: 1290, end: 1560 }, // 21:30 → 02:00 (+1 day)
+] as const satisfies readonly { state: ClockState; start: number; end: number }[]
+
 export function clockState(t: Date): ClockState {
   const m = minutesOfDay(t)
-  if (m >= 1290 || m < 120) return 'lateNight' // 21:30 → 02:00
-  if (m < 660) return 'breakfast' // 02:00 → 11:00
-  if (m < 930) return 'lunch' // 11:00 → 15:30
-  if (m < 1020) return 'gap' // 15:30 → 17:00
-  return 'dinner' // 17:00 → 21:30
+  // Before 02:00 belongs to the previous evening's late night.
+  const extended = m < 120 ? m + MINUTES_PER_DAY : m
+  const window = MEAL_WINDOWS.find((w) => extended >= w.start && extended < w.end)
+  // 02:00–06:00 falls through every window. The spec leaves it undefined; it
+  // maps to breakfast so the never-zero rule surfaces "Schooners opens at 7:30"
+  // rather than an empty late-night list.
+  return window?.state ?? 'breakfast'
 }
 
 /** Minutes-from-midnight to "6:30 PM". */

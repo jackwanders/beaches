@@ -16,6 +16,19 @@ export function assetUrl(path: string | null | undefined): string | null {
 }
 
 /**
+ * The 128px card thumbnail beside a mirrored hero. The heroes are 1920px
+ * marketing shots; three of them on the home screen is ~1.8MB of first paint
+ * for three 64px squares. An un-mirrored hero has no thumbnail, so it falls
+ * back to the remote URL and the card still renders.
+ */
+export function thumbUrl(heroSource: string | null | undefined): string | null {
+  if (!heroSource) return null
+  if (!heroSource.startsWith('assets/venues/')) return assetUrl(heroSource)
+  const slug = heroSource.slice('assets/venues/'.length).replace(/\.[^.]+$/, '')
+  return assetUrl(`assets/thumbs/${slug}.jpg`)
+}
+
+/**
  * `menuPath` is either a mirrored local path or still a CDN path that has to be
  * appended to `menuUrlBase` — and those filenames carry apostrophes, commas and
  * parentheses, so the remote form gets encoded.
