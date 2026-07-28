@@ -118,13 +118,17 @@ export function DetailSheet({
       onClick={(e) => {
         if (e.target === ref.current) onClose()
       }}
+      // `open:flex` rather than `flex`: an author-level `display: flex` would
+      // beat the UA's `dialog:not([open]) { display: none }` and leave the
+      // sheet visible while closed. The variant only applies when open.
+      //
       // overflow-hidden so the hero is clipped by the sheet's top corners; the
-      // scrolling happens on the child.
-      className="fixed inset-x-0 top-auto bottom-0 m-0 max-h-[88dvh] w-full max-w-md overflow-hidden rounded-t-3xl bg-ocean p-0 text-foam backdrop:bg-black/70 sm:mx-auto"
+      // scrolling happens on the body below.
+      className="fixed inset-x-0 top-auto bottom-0 m-0 max-h-[88dvh] w-full max-w-md flex-col overflow-hidden rounded-t-3xl bg-ocean p-0 text-foam backdrop:bg-black/70 open:flex sm:mx-auto"
     >
       {venue && service && (
-        <div className="max-h-[88dvh] overflow-y-auto overscroll-contain">
-          <div className="relative">
+        <>
+          <div className="relative shrink-0">
             {hero && <img src={hero} alt="" className="h-44 w-full object-cover" />}
             <div
               className={`${hero ? 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-ocean to-transparent pt-12' : ''} px-4 pb-3`}
@@ -147,7 +151,8 @@ export function DetailSheet({
             </button>
           </div>
 
-          <div className="space-y-3 px-4 pt-1 pb-8">
+          {/* The only scrolling region: the header above stays put. */}
+          <div className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pt-3 pb-8">
             {venue.tagline && (
               <p className="text-sm leading-snug text-sand/80">{venue.tagline}</p>
             )}
@@ -167,7 +172,7 @@ export function DetailSheet({
               />
             ))}
           </div>
-        </div>
+        </>
       )}
     </dialog>
   )
