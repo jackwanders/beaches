@@ -254,6 +254,42 @@ ambiguous".
   would immediately dismantle. Until then, stars are visible on the venue's own
   sheet and in the export.
 
+## Step 10 — Explore
+
+- **A `Now | Explore` segmented control in the header, not a bottom tab bar.**
+  Mode switching is a once-per-trip-phase action, so it does not earn permanent
+  thumb-reach real estate — and measured, the Now screen had only ~53px of
+  vertical slack at 16:00, which a 56–64px tab bar plus safe-area inset would
+  have spent, pushing the gap state into scrolling.
+- **The app opens on the mode the trip dates imply.** Before and after the
+  trip, Explore; during it, Now. One tap overrides. This is the first use of
+  `CONFIG.TRIP_START` and `TRIP_NIGHTS`, which were dead until now.
+- **Explore lists services, not venues**, in both groupings. Stars and notes
+  are per service, and "never collapse a service back to its venue" is the
+  app's core rule; a single row type also keeps the starred filter coherent.
+  Most venues run one or two services, so the repetition is mild — only five
+  run three.
+- **Explore is the catalogue, so it deliberately breaks the filters every other
+  surface applies.** Mario's appears despite `operational: false` — this is the
+  only screen where it is reachable at all, and it makes the step-7
+  `!venue.operational` branch live rather than dead code. 12+ services appear
+  regardless of `HAS_UNDER_12`, carrying their badge: hiding a restaurant from
+  someone reading about the resort in July helps nobody.
+- **Empty groups are dropped.** Seaside Village exists in the seed data and
+  holds no venues at all, and the starred filter empties most groups.
+- **Favorites are the starred filter here, not a third destination**, which is
+  what keeps the top level at two and the header control sufficient. Notes
+  render on the rows, which is the spec's "starred services with notes,
+  grouped by meal".
+- **The header label dropped from `text-3xl` to `text-2xl`.** "BETWEEN MEALS"
+  is the longest label and at 3xl it truncated on a 375px phone once the clock
+  and two icons shared the row — a real regression for 90 minutes a day. Still
+  larger than the venue names on the cards. `Recommendations` also lost 16px of
+  bottom padding to keep the 16:00 gap state off the scrollbar; it now clears
+  by 25px at 412×915.
+- **`App.tsx` owns what both modes share** — the clock, stars and notes, and
+  the three dialogs. `Home` is now just the Now mode's content.
+
 ## Menu PDF extraction — measured, not recommended
 
 The spec files dish-level PDF parsing as progressive enhancement. Measured

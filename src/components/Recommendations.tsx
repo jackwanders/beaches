@@ -36,7 +36,10 @@ export function Recommendations({
     : []
 
   return (
-    <div className="px-4 pb-8">
+    // pb-4, not pb-8: the mode control costs the header ~50px, and at 16:00 —
+    // the gap, with the "Also open" line — that is the difference between
+    // fitting on a phone and not.
+    <div className="px-4 pb-4">
       <div className="flex flex-col gap-3">
         {visible.map((c) => (
           <VenueCard key={c.service.id} candidate={c} nowMinutes={nowMinutes} onSelect={onSelect} />

@@ -1,7 +1,102 @@
+import { useState } from 'react'
+import { clockState, minutesOfDay } from './lib/clock'
+import { useFavorites } from './lib/favorites'
+import { dismissInstallPrompt, readInstallContext, shouldPromptInstall } from './lib/ios'
+import { useNow } from './lib/now'
+import { defaultMode, type Mode } from './lib/trip'
+import type { Service } from './types'
+import { DetailSheet } from './components/DetailSheet'
+import { Explore } from './components/Explore'
+import { Header } from './components/Header'
 import { Home } from './components/Home'
+import { Search } from './components/Search'
+import { Settings } from './components/Settings'
 
-// Steps 7–10 add a detail sheet, search, favorites and settings; this becomes
-// the view switcher then.
+/**
+ * Owns everything both modes share: the clock, stars and notes, and the three
+ * dialogs. `Home` is the Now mode's content; `Explore` is the catalogue.
+ */
 export default function App() {
-  return <Home />
+  const { now, simulated } = useNow()
+  const nowMinutes = minutesOfDay(now)
+
+  // Opens on whichever mode the trip dates imply; one tap overrides it.
+  const [mode, setMode] = useState<Mode>(() => defaultMode(new Date()))
+  const [selected, setSelected] = useState<Service | null>(null)
+  const [searching, setSearching] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [installDismissed, setInstallDismissed] = useState(false)
+
+  const { backup, toggleStar, setNote, importBackup } = useFavorites()
+
+  // Only asks once there is a star or a note to lose, and never again once
+  // dismissed or once the app is running from the home screen.
+  const showInstallPrompt =
+    !installDismissed &&
+    shouldPromptInstall(
+      readInstallContext(backup.favorites.length > 0 || Object.keys(backup.notes).length > 0),
+    )
+
+  return (
+    <main className="mx-auto min-h-dvh w-full max-w-md bg-ocean text-foam">
+      <Header
+        now={now}
+        state={clockState(now)}
+        mode={mode}
+        simulated={simulated}
+        onMode={setMode}
+        onSearch={() => setSearching(true)}
+        onSettings={() => setSettingsOpen(true)}
+      />
+
+      {mode === 'now' ? (
+        <Home now={now} nowMinutes={nowMinutes} onSelect={setSelected} />
+      ) : (
+        <Explore
+          nowMinutes={nowMinutes}
+          favorites={backup.favorites}
+          notes={backup.notes}
+          onSelect={setSelected}
+        />
+      )}
+
+      {showInstallPrompt && (
+        <div className="mx-4 mt-4 flex items-start gap-3 rounded-xl border border-sand/30 p-3">
+          <p className="flex-1 text-[13px] leading-snug text-sand">
+            Add to Home Screen to keep your stars — Safari clears them after a week away.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              dismissInstallPrompt()
+              setInstallDismissed(true)
+            }}
+            aria-label="Dismiss"
+            className="-mt-1 -mr-1 shrink-0 px-2 py-1 text-sand/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      <Search open={searching} now={now} onClose={() => setSearching(false)} onSelect={setSelected} />
+
+      <Settings
+        open={settingsOpen}
+        backup={backup}
+        onImport={importBackup}
+        onClose={() => setSettingsOpen(false)}
+      />
+
+      <DetailSheet
+        service={selected}
+        nowMinutes={nowMinutes}
+        favorites={backup.favorites}
+        notes={backup.notes}
+        onToggleStar={toggleStar}
+        onNote={setNote}
+        onClose={() => setSelected(null)}
+      />
+    </main>
+  )
 }
